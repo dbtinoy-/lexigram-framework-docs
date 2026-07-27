@@ -3,7 +3,7 @@ title: Commands
 description: Commands guide and reference for the lexigram-cli package in the Lexigram framework.
 ---
 
-> **Alpha (0.1.x)** — MIT licensed. Commands and flags may change before 1.0.
+> **Experimental (0.1.x)** — MIT licensed. Commands and flags may change before 1.0.
 
 ## Overview
 

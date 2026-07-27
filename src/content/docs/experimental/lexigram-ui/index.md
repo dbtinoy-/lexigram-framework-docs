@@ -1,10 +1,6 @@
 ---
 title: UI (lexigram-ui)
 description: Server-rendered HTMX/htpy component library — atoms, molecules, organisms, and layouts for Lexigram web applications.
-sidebar:
-  badge:
-    text: Alpha
-    variant: caution
 ---
 
 HTMX/htpy component library for Lexigram web applications.
