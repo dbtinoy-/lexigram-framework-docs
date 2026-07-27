@@ -47,14 +47,14 @@ TRUST   di · contracts · modules · async
 ## what it does, in three cards
 
 <CardGrid>
-  <Card title="Agents" icon="puzzle">
-    Define an agent class, decorate a few `@tool` methods, pick a strategy (`react`, `plan`, your own). The container wires the LLM, the tools, and the trace — you just run it.
+  <Card title="AI Agents" icon="puzzle">
+    An agent class, a few `@tool` methods, pick a strategy — react, plan, or write your own. The container wires the LLM, tools, and trace. You just run it.
   </Card>
   <Card title="RAG" icon="magnifier">
-    Stand up a retrieval pipeline with one `RAGPipeline(...)`. Embedders, retrievers, chunkers, and rerankers are all swappable through contracts. Ingest once, answer forever.
+    One `RAGPipeline(...)` call and you have retrieval. Embedders, retrievers, chunkers, rerankers — all swappable through contracts, all wired by the container.
   </Card>
-  <Card title="Skills" icon="puzzle">
-    Teach your agent anything with a markdown file — lexigram-skills bundles into Claude Code, OpenCode, Cursor, or any markdown-aware agent. No plugin SDK, no config.
+  <Card title="Memory" icon="seti:database">
+    Working, episodic, semantic — pick the store, wire the provider. Your agent remembers between turns, across sessions, without you building a cache layer.
   </Card>
 </CardGrid>
 
