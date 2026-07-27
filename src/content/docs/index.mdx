@@ -37,7 +37,7 @@ Lexigram is a python framework that hands you Agents, LLMs, RAG, Skills, and mem
 ---
 
 ```text
-HOOK    agents · llms · rag · mcp · memory
+HOOK    agents · llms · rag · skills · memory
 CORE    web · sql · cache · auth · queue · events
 TRUST   di · contracts · modules · async
 ```
@@ -53,8 +53,8 @@ TRUST   di · contracts · modules · async
   <Card title="RAG" icon="magnifier">
     Stand up a retrieval pipeline with one `RAGPipeline(...)`. Embedders, retrievers, chunkers, and rerankers are all swappable through contracts. Ingest once, answer forever.
   </Card>
-  <Card title="MCP" icon="seti:plug">
-    Serve tools to any MCP-compatible host, or consume tools from any MCP server. Same contracts, same container. Your agent doesn't care which side of the wire it's on.
+  <Card title="Skills" icon="puzzle">
+    Teach your agent anything with a markdown file — lexigram-skills bundles into Claude Code, OpenCode, Cursor, or any markdown-aware agent. No plugin SDK, no config.
   </Card>
 </CardGrid>
 
