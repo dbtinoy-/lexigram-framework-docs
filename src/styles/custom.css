@@ -610,6 +610,18 @@
 		transform: scale(1.02);
 	}
 
+	/* --- Three card grid (landing page) --- */
+	.three-card-grid {
+		display: grid;
+		gap: 1.5rem;
+		grid-template-columns: 1fr;
+	}
+	@media (min-width: 768px) {
+		.three-card-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
 	/* --- Hero section (MDX component) --- */
 	.hero-section {
 		text-align: center;
