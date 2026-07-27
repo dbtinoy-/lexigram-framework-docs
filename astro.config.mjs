@@ -133,6 +133,7 @@ export default defineConfig({
             {
               label: 'lexigram-utilities',
               items: [
+                { label: 'Overview', slug: 'experimental' },
                 {
                   label: 'Testing',
                   autogenerate: { directory: 'packages/utilities/lexigram-testing' },
