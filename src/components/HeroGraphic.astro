@@ -1,0 +1,121 @@
+---
+// src/components/HeroGraphic.astro
+// AI Agent Execution Flow — based on lexigram-ai-agents (ReAct strategy)
+import '../styles/hero-graphic.css';
+---
+
+<div class="hg-wrapper">
+  <div class="glow-blob blob-1"></div>
+  <div class="glow-blob blob-2"></div>
+
+  <div class="hg-card">
+
+    <!-- Window chrome -->
+    <div class="hg-header">
+      <div class="mac-dots">
+        <span class="dot close"></span>
+        <span class="dot min"></span>
+        <span class="dot max"></span>
+      </div>
+      <span class="hg-title">lexigram-ai-agents · react execution</span>
+      <span class="hg-badge">● Live</span>
+    </div>
+
+    <!-- Body: two columns -->
+    <div class="hg-body">
+
+      <!-- LEFT: condensed code snippet -->
+      <div class="hg-code">
+        <div class="code-file-tab">agent.py</div>
+        <pre><code><span class="c"># wire the agent in one module</span>
+<span class="kw">from</span> lexigram.ai.agents <span class="kw">import</span> AgentsModule, AgentBase
+
+<span class="c">@tool</span>
+<span class="kw">async def</span> <span class="fn">search_docs</span>(query: <span class="tp">str</span>) -> <span class="tp">str</span>:
+    ...
+
+<span class="kw">class</span> <span class="fn">ResearchAgent</span>(AgentBase):
+    system_prompt = <span class="st">"You are a research assistant."</span>
+    tools = [search_docs]
+    strategy = <span class="st">"react"</span>
+
+<span class="c"># resolve &amp; run</span>
+result = <span class="kw">await</span> agent.run(<span class="st">"Explain the Result pattern"</span>)
+<span class="kw">return</span> result.unwrap()</code></pre>
+      </div>
+
+      <!-- RIGHT: live execution trace -->
+      <div class="hg-trace">
+
+        <!-- User message -->
+        <div class="trace-row">
+          <div class="trace-node user-node">
+            <div class="tn-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            </div>
+            <div class="tn-text">
+              <span class="tn-label">User Prompt</span>
+              <span class="tn-value">"Explain the Result pattern"</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="trace-connector"></div>
+
+        <!-- Agent: Thinking -->
+        <div class="trace-row">
+          <div class="trace-node agent-node">
+            <div class="tn-icon" style="color:#a855f7;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 1 8 8c0 5-8 12-8 12S4 15 4 10a8 8 0 0 1 8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div class="tn-text">
+              <span class="tn-label" style="color:rgba(168,85,247,0.7);">ReAct · Iteration 1</span>
+              <span class="tn-value">Thought: I should search the docs first.</span>
+            </div>
+            <div class="thinking-dots"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+
+        <div class="trace-connector"></div>
+
+        <!-- Tool call -->
+        <div class="trace-row">
+          <div class="trace-node tool-node">
+            <div class="tn-icon" style="color:#f59e0b;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <div class="tn-text">
+              <span class="tn-label" style="color:rgba(245,158,11,0.7);">Tool · @tool</span>
+              <span class="tn-value">search_docs("Result pattern")</span>
+            </div>
+            <span class="tn-tag">Injected</span>
+          </div>
+        </div>
+
+        <div class="trace-connector"></div>
+
+        <!-- Final answer -->
+        <div class="trace-row">
+          <div class="trace-node result-node">
+            <div class="tn-icon" style="color:#22c55e;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="tn-text">
+              <span class="tn-label" style="color:rgba(34,197,94,0.7);">Result · Ok(str)</span>
+              <span class="tn-value">"The Result pattern makes failure explicit..."</span>
+            </div>
+            <div class="status-glow"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Variant accents only — structural and animation styles live in
+   * src/styles/hero-graphic.css, imported above. */
+  .blob-1 { width: 280px; height: 280px; top: -40px; left: -40px; background: rgba(139, 92, 246, 0.35); }
+  .blob-2 { width: 260px; height: 260px; bottom: -40px; right: -20px; background: rgba(56, 189, 248, 0.25); }
+</style>

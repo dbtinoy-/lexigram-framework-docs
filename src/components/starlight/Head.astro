@@ -1,0 +1,146 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import StarlightHead from '@astrojs/starlight/components/Head.astro';
+---
+
+<StarlightHead {...Astro.props}><slot /></StarlightHead>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script is:inline>
+  (function() {
+    const root = document.documentElement;
+    
+    const theme = localStorage.getItem('starlight-theme');
+    if (!theme) {
+      localStorage.setItem('starlight-theme', 'dark');
+      root.dataset.theme = 'dark';
+    } else {
+      root.dataset.theme = theme;
+    }
+
+    const savedMini = localStorage.getItem('sidebar-mini');
+    if (savedMini === 'true') {
+      root.classList.add('root-sidebar-mini');
+    }
+    
+    const savedSplit = localStorage.getItem('sidebar-split-percent');
+    if (savedSplit) {
+      root.style.setProperty('--lex-sidebar-split', savedSplit + '%');
+    }
+    
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        root.classList.add('sidebar-ready');
+      }, 200);
+    });
+  })();
+</script>
+
+<style is:inline>
+	:root {
+		--sl-main-tier-width: 13rem;
+		--sl-main-tier-width-full: 13rem;
+		--sl-secondary-tier-width: 20rem;
+		--sl-main-tier-mini: 5rem;
+		--sl-content-width: 56rem;
+		--sl-sidebar-width: calc(var(--sl-main-tier-width) + var(--sl-secondary-tier-width) + 2rem);
+	}
+
+	:root.root-sidebar-mini {
+		--sl-main-tier-width: var(--sl-main-tier-mini);
+		--sl-content-width: calc(56rem + (var(--sl-main-tier-width-full) - var(--sl-main-tier-mini)));
+	}
+
+	/* Right sidebar — static width, unaffected by sidebar mode */
+	.right-sidebar-container {
+		width: 20rem;
+	}
+
+	/* Override Starlight's sl-content-margin-inline to flush left (sidebar pages only) */
+	:root[data-has-sidebar] .sl-container {
+		--sl-content-margin-inline: 0 auto;
+	}
+
+	/* Disable transitions before first paint to prevent flicker */
+	.main-tier,
+	.secondary-tier,
+	.sidebar-content,
+	.tier-item,
+	.tier-label,
+	.active-indicator {
+		transition: none !important;
+	}
+
+	:root.sidebar-ready .main-tier,
+	:root.sidebar-ready .sidebar-content,
+	:root.sidebar-ready .secondary-tier,
+	:root.sidebar-ready .tier-item,
+	:root.sidebar-ready .tier-label,
+	:root.sidebar-ready .active-indicator {
+		transition: width var(--transition-slow),
+		            flex-basis var(--transition-slow),
+		            padding var(--transition-slow),
+		            background-color var(--transition-base),
+		            color var(--transition-base),
+		            transform var(--transition-base) !important;
+	}
+
+	@media (min-width: 50rem) {
+		#starlight__sidebar.sidebar-pane {
+			visibility: visible !important;
+			display: flex !important;
+		}
+	}
+
+	/* Mini-mode — hide labels, preserve separators */
+	:root.root-sidebar-mini .main-tier .tier-label,
+	:root.root-sidebar-mini .main-tier .section-title {
+		display: none !important;
+	}
+
+	:root.root-sidebar-mini .main-tier .tier-short-label {
+		display: block !important;
+	}
+
+	:root.root-sidebar-mini .main-tier .section-separator {
+		display: block !important;
+		margin: 0.5rem 0.75rem !important;
+	}
+
+	:root.root-sidebar-mini .main-tier .tier-item {
+		flex-direction: column !important;
+		justify-content: center !important;
+		padding: 0.6rem 0.25rem !important;
+		gap: 0.25rem !important;
+	}
+
+	:root.root-sidebar-mini .main-tier .tier-label {
+		display: none !important;
+	}
+
+	:root.root-sidebar-mini .main-tier .tier-short-label {
+		display: block !important;
+	}
+
+	.main-tier .tier-section:first-child .section-separator {
+		display: none !important;
+	}
+
+	@media (max-width: 49.999rem) {
+		:root {
+			--sl-main-tier-width: 0rem;
+			--sl-sidebar-width: var(--sl-secondary-tier-width);
+		}
+	}
+
+	/* Immediate sidebar transparency — flicker prevention */
+	#starlight__sidebar.sidebar-pane,
+	#starlight__sidebar .sidebar-content,
+	.main-tier,
+	.secondary-tier {
+		background-color: transparent !important;
+	}
+</style>

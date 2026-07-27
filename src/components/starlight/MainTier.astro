@@ -1,0 +1,247 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+
+const { activeGroup } = Astro.props;
+
+const sections = [
+  {
+    title: 'Foundation Docs',
+    items: [
+      { id: 'getting-started', icon: 'rocket', label: 'Getting Started', shortLabel: 'Start', href: '/getting-started/installation/' },
+      { id: 'ecosystem', icon: 'random', label: 'Ecosystem', shortLabel: 'Eco', href: '/ecosystem/' },
+      { id: 'fundamentals', icon: 'information', label: 'Fundamentals', shortLabel: 'Core', href: '/fundamentals/application-lifecycle/' },
+      { id: 'guides', icon: 'document', label: 'Guides', shortLabel: 'Guides', href: '/guides/authentication/' },
+      { id: 'reference', icon: 'open-book', label: 'Reference', shortLabel: 'Ref', href: '/reference/errors/' },
+      { id: 'audit', icon: 'approve-check-circle', label: 'Audit', shortLabel: 'Audit', href: '/audit/quality/' },
+    ],
+  },
+  {
+    title: 'Package Domains',
+    items: [
+      { id: 'foundation', icon: 'star', label: 'Foundation', shortLabel: 'Found', href: '/packages/foundation/' },
+      { id: 'web', icon: 'chrome', label: 'Web & HTTP', shortLabel: 'Web', href: '/packages/web/' },
+      { id: 'data', icon: 'list-format', label: 'Data & Storage', shortLabel: 'Data', href: '/packages/data/' },
+      { id: 'security', icon: 'setting', label: 'Security', shortLabel: 'Sec', href: '/packages/security/' },
+      { id: 'events', icon: 'email', label: 'Events & Messaging', shortLabel: 'Events', href: '/packages/events/' },
+      { id: 'infra', icon: 'puzzle', label: 'Infrastructure', shortLabel: 'Infra', href: '/packages/infra/' },
+      { id: 'utilities', icon: 'wrench', label: 'Utils (WIP)', shortLabel: 'Utils', href: '/packages/utilities/' },
+    ],
+  },
+  {
+    title: 'Platform',
+    items: [
+      { id: 'ai', icon: 'robot-emoji', label: 'AI', shortLabel: 'AI', href: '/platform/' },
+    ],
+  },
+
+];
+---
+
+<div class="main-tier sl-flex">
+  {sections.map((section) => (
+    <div class="tier-section">
+      <div class="section-separator" />
+      <p class="section-title">{section.title}</p>
+      {section.items.map((group) => (
+        <div class="tier-wrapper sl-flex">
+          {activeGroup === group.id && <div class="active-indicator" />}
+          <a
+            href={group.href}
+            class:list={['tier-item sl-flex', { active: activeGroup === group.id }]}
+            aria-label={group.label}
+            title={group.label}
+          >
+            {group.id === 'ai' ? (
+              <span class="tier-icon-wrapper">
+                🤖
+              </span>
+            ) : group.id === 'utilities' ? (
+              <span class="tier-icon-wrapper">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              </span>
+            ) : (
+              <Icon name={group.icon as any} size="1.5rem" />
+            )}
+            <span class="tier-label">{group.label}</span>
+          </a>
+        </div>
+      ))}
+    </div>
+  ))}
+
+  <div class="tier-spacer" />
+  
+  <div class="tier-section toggle-section">
+    <div class="section-separator" />
+    <button class="mini-toggle sl-flex" id="sidebar-mini-toggle" aria-label="Toggle sidebar mini mode" title="Toggle mini mode">
+      <div class="tier-item sl-flex">
+        <span class="tier-icon-wrapper">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <line x1="9" y1="3" x2="9" y2="21"/>
+          </svg>
+        </span>
+      </div>
+    </button>
+  </div>
+</div>
+
+<script>
+  const btn = document.getElementById('sidebar-mini-toggle');
+  btn?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const isMini = root.classList.contains('root-sidebar-mini');
+    root.classList.toggle('root-sidebar-mini', !isMini);
+    localStorage.setItem('sidebar-mini', String(!isMini));
+  });
+</script>
+
+<style>
+  .main-tier {
+    width: var(--sl-main-tier-width);
+    min-width: var(--sl-main-tier-width);
+    background-color: var(--main-tier-bg);
+    border-right: 1px solid var(--color-border-weak);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem 0.75rem;
+    gap: 0.25rem;
+    height: 100%;
+    min-height: 0;
+    flex-shrink: 0;
+    z-index: 20;
+    position: relative;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+  }
+
+  .tier-section + .tier-section {
+    margin-top: 0.5rem;
+  }
+
+  .section-separator {
+    height: 1px;
+    background: var(--color-border-weak);
+    margin: 0.25rem 0 0.45rem;
+  }
+
+  .tier-section:first-child .section-separator {
+    display: none;
+  }
+
+  .section-title {
+    margin: 0 0 0.35rem;
+    padding: 0 0.7rem;
+    color: var(--color-text-weaker);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .tier-wrapper {
+    position: relative;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0;
+  }
+
+  .tier-item {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.6rem 0.85rem;
+    min-height: 44px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    text-decoration: none;
+    color: var(--main-tier-text);
+    opacity: 0.65;
+    transition: opacity var(--transition-base), background-color var(--transition-base), transform var(--transition-base);
+  }
+
+  .tier-item:hover {
+    background-color: var(--color-background-strong-hover);
+    color: var(--color-text-strong);
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  .tier-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .tier-item.active {
+    background-color: var(--color-background-strong);
+    color: var(--color-text-strong);
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .tier-label {
+    display: block;
+    font-family: var(--sl-font);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tier-short-label {
+    display: none;
+    font-family: var(--sl-font);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .active-indicator {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 16px;
+    background-color: var(--sl-color-accent);
+    border-radius: 0 4px 4px 0;
+    z-index: 10;
+    display: block;
+  }
+
+  .tier-spacer {
+    flex-grow: 1;
+  }
+
+  .mini-toggle {
+    background: none;
+    border: none;
+    width: 100%;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .toggle-section {
+    margin-top: auto;
+  }
+
+  @media (max-width: 49.999rem) {
+    .main-tier {
+      display: none;
+    }
+  }
+</style>

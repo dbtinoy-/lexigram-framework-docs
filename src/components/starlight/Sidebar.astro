@@ -1,0 +1,437 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import SidebarSublist from '@astrojs/starlight/components/SidebarSublist.astro';
+import MobileMenuFooter from 'virtual:starlight/components/MobileMenuFooter';
+import MainTier from './MainTier.astro';
+
+/**
+ * Retrieve context from Starlight locals.
+ */
+const { sidebar } = Astro.locals.starlightRoute;
+const { pathname } = Astro.url;
+
+const PATH_GROUPS: [string, string][] = [
+  ['getting-started', 'getting-started'],
+  ['ecosystem', 'ecosystem'],
+  ['fundamentals', 'fundamentals'],
+  ['guides', 'guides'],
+  ['reference', 'reference'],
+  ['audit', 'audit'],
+  ['packages/events', 'events'],
+  ['packages/utilities', 'utilities'],
+  ['platform', 'ai'],
+  ['packages/web', 'web'],
+  ['packages/web-api', 'web'],
+  ['packages/data', 'data'],
+  ['packages/data-storage', 'data'],
+  ['packages/security', 'security'],
+  ['packages/infra', 'infra'],
+  ['packages/tasks-workflow', 'infra'],
+  ['packages/observability', 'infra'],
+  ['packages/foundation', 'foundation'],
+  ['packages/core', 'foundation'],
+  ['experimental', 'experimental'],
+];
+
+const activeGroup = (
+  PATH_GROUPS
+    .sort((a, b) => b[0].length - a[0].length)
+    .find(([path]) => {
+      const normalizedPath = pathname.replace(/\/$/, '') + '/';
+      const searchPath = ('/' + path).replace(/\/$/, '') + '/';
+      return normalizedPath.includes(searchPath);
+    })?.[1]
+  ?? 'foundation'
+);
+
+const GROUP_CONFIG: Record<string, { source: 'top' | 'core'; label: string; subLabel?: string }> = {
+  'getting-started': { source: 'top', label: 'GETTING STARTED' },
+  ecosystem: { source: 'top', label: 'ECOSYSTEM' },
+  fundamentals: { source: 'top', label: 'FUNDAMENTALS' },
+  guides: { source: 'top', label: 'GUIDES' },
+  reference: { source: 'top', label: 'REFERENCE' },
+  audit: { source: 'top', label: 'AUDIT' },
+  experimental: { source: 'core', label: 'lexigram-experimental' },
+  utilities: { source: 'core', label: 'lexigram-utilities' },
+  ai: { source: 'top', label: 'PLATFORM', subLabel: 'lexigram-ai' },
+  foundation: { source: 'core', label: 'lexigram-foundation' },
+  web: { source: 'core', label: 'lexigram-web' },
+  data: { source: 'core', label: 'lexigram-data' },
+  security: { source: 'core', label: 'lexigram-security' },
+  events: { source: 'core', label: 'lexigram-events' },
+  infra: { source: 'core', label: 'lexigram-infra' },
+};
+
+const currentConfig = GROUP_CONFIG[activeGroup] ?? GROUP_CONFIG.foundation;
+
+const corePackagesGroup = (sidebar ?? []).find(
+  (g) => g?.label?.toUpperCase() === 'FOUNDATION PACKAGES'
+);
+
+const findTopGroup = (label: string) =>
+  (sidebar ?? []).find((g) => g?.label?.toUpperCase() === label);
+const findCoreSubgroup = (label: string) =>
+  corePackagesGroup?.entries?.find((e) => e?.type === 'group' && e?.label === label);
+
+const getEntries = () => {
+  if (currentConfig.source === 'top') {
+    const topGroup = findTopGroup(currentConfig.label);
+    const sub = currentConfig.subLabel
+      ? (topGroup?.entries?.find((e) => e?.type === 'group' && e?.label === currentConfig.subLabel) as any)?.entries
+      : topGroup?.entries;
+    return sub ?? [];
+  }
+  const coreSubgroup = findCoreSubgroup(currentConfig.label);
+  const sub = currentConfig.subLabel
+    ? (coreSubgroup?.entries?.find((e) => e?.type === 'group' && e?.label === currentConfig.subLabel) as any)?.entries
+    : coreSubgroup?.entries;
+  return sub ?? [];
+};
+
+const flattenLinks = (entries: any[]): any[] =>
+  entries.flatMap((e) => {
+    if (!e) return [];
+    if (e.type === 'link') return [e];
+    if (e.type === 'group') return flattenLinks(e.entries ?? []);
+    return [];
+  });
+
+const selectedEntries = getEntries();
+
+const topLevelLinks = selectedEntries.map((entry) => {
+  if (entry.type === 'link') return entry;
+  if (entry.type === 'group') {
+    const flat = flattenLinks([entry]);
+    const firstLink = flat.find((e) => e.type === 'link');
+    return firstLink ? { ...firstLink, label: entry.label } : null;
+  }
+  return null;
+}).filter(Boolean);
+
+const currentPath = pathname.replace(/\/$/, '');
+const activeGroupEntry = selectedEntries.find((entry) => {
+  if (entry.type === 'group') {
+    const flat = flattenLinks([entry]);
+    return flat.some((e) => {
+      if (e.type !== 'link') return false;
+      const entryHref = (e.href ?? '').replace(/\/$/, '') + '/';
+      const normalizedPath = currentPath + '/';
+      return normalizedPath.startsWith(entryHref);
+    });
+  }
+  return false;
+});
+
+const LABEL_MAP: Record<string, string> = {
+  'lexigram-foundation': 'Foundation',
+  'lexigram-web': 'Web',
+  'lexigram-data': 'Data',
+  'lexigram-security': 'Security',
+  'lexigram-events': 'Events',
+  'lexigram-infra': 'Infrastructure',
+  'lexigram-utilities': 'Utils',
+  'lexigram-ai': 'AI',
+  'lexigram-admin': 'Admin',
+  'lexigram-cli': 'CLI',
+  'lexigram-ui': 'UI',
+  'lexigram-testing': 'Testing',
+  'lexigram-contracts': 'Contracts',
+};
+
+const humanizeLabel = (label: string): string => {
+  if (label === 'Foundation' || label === 'Core') return label;
+  if (label === 'lexigram') return `Core --- (${label})`;
+  if (LABEL_MAP[label]) return `${LABEL_MAP[label]} --- (${label})`;
+  if (!label.startsWith('lexigram-')) return label;
+  const base = label
+    .replace('lexigram-', '')
+    .split('-')
+    .map((p) => (['ai', 'ui', 'cli', 'http', 'sql', 'nosql', 'sse', 'mcp'].includes(p) ? p.toUpperCase() : p.charAt(0).toUpperCase() + p.slice(1)))
+    .join(' ');
+  return `${base} --- (${label})`;
+};
+
+let activePackageDocs: any[] = [];
+let activePackageName = '';
+
+if (activeGroupEntry) {
+  activePackageName = humanizeLabel(activeGroupEntry.label);
+  const flat = flattenLinks([activeGroupEntry]);
+  const overviewHref = flat[0]?.href;
+  const seen = new Set<string>();
+  activePackageDocs = flat.filter((e) => {
+    if (e.href === overviewHref || (e.href ?? '').endsWith('/api/')) return false;
+    const key = e.href ?? e.label;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+const activeOverviewHref = activeGroupEntry
+  ? flattenLinks([activeGroupEntry])[0]?.href?.replace(/\/$/, '')
+  : null;
+
+const topLevelLinksWithActive = topLevelLinks.map((entry: any) => {
+  if (!entry) return entry;
+  const newEntry = { ...entry, label: humanizeLabel(entry.label) };
+  if (!activeOverviewHref) return newEntry;
+  const entryHref = (entry.href ?? '').replace(/\/$/, '');
+  return entryHref === activeOverviewHref ? { ...newEntry, isCurrent: true } : newEntry;
+});
+---
+
+<MainTier activeGroup={activeGroup} />
+<div class="secondary-tier">
+  <div class="sublist-wrapper" id="packages-top-pane">
+    <SidebarSublist sublist={topLevelLinksWithActive} />
+  </div>
+  {activePackageDocs.length > 0 && (
+    <>
+      <div class="sidebar-divider" id="sidebar-resizer">
+        <div class="divider-handle"></div>
+      </div>
+      <div class="active-package-section" id="active-docs-pane">
+        <div class="section-title">
+          {activePackageName.includes(' --- ') ? (
+            <span>
+              {activePackageName.split(' --- ')[0]} Docs
+              <span class="package-meta" style="color: var(--sl-color-gray-3); font-size: 0.85em; margin-left: 0.4rem; font-weight: 400; text-transform: none; letter-spacing: normal; opacity: 0.9;">
+                {activePackageName.split(' --- ')[1]}
+              </span>
+            </span>
+          ) : (
+            <span>{activePackageName} Docs</span>
+          )}
+        </div>
+        <SidebarSublist sublist={activePackageDocs} />
+      </div>
+    </>
+  )}
+  <div class="md:sl-hidden">
+    <MobileMenuFooter />
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    const processLabels = () => {
+      // Only target the spans inside links in the top pane
+      const links = document.querySelectorAll('#packages-top-pane a span');
+      links.forEach(span => {
+        if (span.textContent.includes(' --- ')) {
+          const [name, meta] = span.textContent.split(' --- ');
+          span.innerHTML = `${name} <span class="package-meta" style="color: var(--sl-color-gray-3); font-size: 0.85em; margin-left: 0.3rem; font-weight: 400; opacity: 0.9;">${meta}</span>`;
+        }
+      });
+    };
+
+    // Run on load
+    processLabels();
+
+    // Run after view transitions
+    document.addEventListener('astro:after-swap', processLabels);
+  })();
+</script>
+
+<script>
+  (function() {
+    let isResizing = false;
+    let activeResizer = null;
+    let activeDocsPane = null;
+    let topPane = null;
+
+    const onMouseMove = (e) => {
+      if (!isResizing || !activeResizer || !activeDocsPane || !topPane) return;
+
+      const sidebar = activeResizer.closest('.secondary-tier');
+      if (!sidebar) return;
+
+      const sidebarRect = sidebar.getBoundingClientRect();
+      const relativeY = e.clientY - sidebarRect.top;
+      const totalHeight = sidebarRect.height;
+      
+      let percent = (relativeY / totalHeight) * 100;
+      percent = Math.max(10, Math.min(85, percent));
+
+      // Only update the CSS custom property — CSS handles the flex layout.
+      // Never set style.flex directly to avoid fighting with the CSS rules.
+      document.documentElement.style.setProperty('--lex-sidebar-split', percent + '%');
+      localStorage.setItem('sidebar-split-percent', percent);
+    };
+
+    const onMouseUp = () => {
+      if (isResizing) {
+        isResizing = false;
+        document.body.style.cursor = '';
+        if (activeResizer) activeResizer.classList.remove('is-resizing');
+      }
+    };
+
+    const initResizer = () => {
+      activeResizer = document.getElementById('sidebar-resizer');
+      activeDocsPane = document.getElementById('active-docs-pane');
+      topPane = document.getElementById('packages-top-pane');
+
+      if (!activeResizer || !activeDocsPane || !topPane) return;
+
+      activeResizer.removeEventListener('mousedown', startResizing);
+      activeResizer.addEventListener('mousedown', startResizing);
+      // No inline style override here — the is:inline script already set
+      // --lex-sidebar-split from localStorage before first paint.
+    };
+
+    function startResizing(e) {
+      isResizing = true;
+      document.body.style.cursor = 'row-resize';
+      activeResizer.classList.add('is-resizing');
+      e.preventDefault();
+    }
+
+    if (!window.__lex_main_sidebar_init) {
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+      window.__lex_main_sidebar_init = true;
+    }
+
+    initResizer();
+    document.addEventListener('astro:page-load', initResizer);
+    document.addEventListener('astro:after-swap', initResizer);
+  })();
+</script>
+
+<style>
+  .secondary-tier {
+    flex-grow: 1;
+    height: 100%;
+    min-height: 0;
+    overflow-y: hidden;
+    border-right: 1px solid var(--color-border-weak);
+    background-color: var(--secondary-tier-bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  #packages-top-pane {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+    padding: 1.5rem 0.75rem 0.75rem;
+    scrollbar-gutter: stable;
+  }
+
+  :global(.secondary-tier:has(#active-docs-pane)) #packages-top-pane {
+    flex: 0 0 var(--lex-sidebar-split, 40%);
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  #active-docs-pane {
+    flex: 1 1 0;
+    overflow-y: auto;
+    min-height: 0;
+    padding: 0 0.75rem 1.5rem;
+    scrollbar-gutter: stable;
+  }
+
+  .sidebar-divider {
+    flex: 0 0 12px;
+    cursor: row-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    user-select: none;
+    background: transparent;
+    margin: 4px 0;
+  }
+
+  .sidebar-divider:hover,
+  .sidebar-divider.is-resizing {
+    background: color-mix(in srgb, var(--sl-color-accent) 4%, transparent);
+  }
+
+  .divider-handle {
+    width: 32px;
+    height: 3px;
+    background-color: var(--sl-color-gray-4);
+    border-radius: 999px;
+    transition: background-color 0.15s ease, height 0.1s ease, width 0.15s ease;
+  }
+
+  .sidebar-divider:hover .divider-handle,
+  .sidebar-divider.is-resizing .divider-handle {
+    width: 48px;
+    height: 4px;
+    background-color: var(--sl-color-accent);
+  }
+
+  /* Sidebar nav list padding — applied via child selector since SidebarSublist
+     renders its own wrapper elements */
+  .secondary-tier :global(.sidebar-content) {
+    padding-top: 0 !important; /* top pane already has padding-top on its container */
+  }
+
+  /* Ensure the flattened list looks like a top-level list */
+  .secondary-tier :global(.top-level) {
+    padding: 0 !important;
+  }
+
+  .section-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--secondary-tier-text);
+    padding: 0.5rem 0.75rem;
+    border-top: 1px solid var(--color-border-weak);
+    margin-bottom: 0.25rem;
+    background: var(--secondary-tier-bg);
+    opacity: 0.8;
+  }
+
+  /* Mobile: collapse two-pane sidebar to single column */
+  @media (max-width: 49.999rem) {
+    .secondary-tier {
+      flex-direction: column !important;
+      width: 100% !important;
+      min-width: 100% !important;
+      border-right: none !important;
+      overflow-y: visible !important;
+    }
+
+    #packages-top-pane,
+    #active-docs-pane {
+      flex: none !important;
+      width: 100% !important;
+      min-width: 100% !important;
+      max-width: 100% !important;
+      overflow-y: visible !important;
+      overflow-x: hidden !important;
+    }
+
+    #sidebar-resizer {
+      display: none !important;
+    }
+
+    .section-title {
+      display: none;
+    }
+
+    #active-docs-pane .section-title {
+      display: block;
+      margin-top: 1rem;
+      border-top: 1px solid var(--sl-color-gray-5);
+      padding-top: 1.5rem;
+      background: transparent;
+      font-size: 0.75rem;
+    }
+
+    /* Subtle separator between panes on mobile */
+    #packages-top-pane {
+      border-bottom: 1px solid var(--sl-color-gray-5);
+      padding-bottom: 1rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>

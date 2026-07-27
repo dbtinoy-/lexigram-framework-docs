@@ -1,0 +1,14 @@
+services:
+  docs:
+    build:
+      context: .
+      target: build
+    container_name: lexigram-docs
+    command: npm run preview -- --host 0.0.0.0 --port 80
+    ports:
+      - "3008:80"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.astro
+    restart: unless-stopped

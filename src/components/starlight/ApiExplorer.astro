@@ -1,0 +1,461 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+interface Props {
+  pathname: string;
+}
+
+const { pathname } = Astro.url;
+
+const resolvePackage = (urlPath: string) => {
+  if (!urlPath || urlPath === '/') return null;
+  const parts = urlPath.split('/').filter(Boolean);
+  
+  // Strategy 1: Look for lexigram-*
+  const lexigramPkg = parts.find(p => p.startsWith('lexigram'));
+  if (lexigramPkg) return lexigramPkg;
+  
+  // Strategy 2: If we are deep in category folders
+  const categories = ['packages', 'platform', 'foundation', 'infra', 'web', 'data', 'security', 'events'];
+  const catIndex = parts.findIndex(p => categories.includes(p));
+  if (catIndex !== -1 && parts[catIndex + 1]) {
+    const pkg = parts[catIndex + 1];
+    if (pkg !== 'api' && pkg !== 'getting-started' && pkg !== 'fundamentals' && pkg !== 'guides') return pkg;
+  }
+  
+  return null;
+};
+
+const packageName = resolvePackage(pathname);
+
+const findApiFile = (pkg: string | null) => {
+  if (!pkg) return null;
+  const contentDocsDir = path.join(process.cwd(), 'src/content/docs');
+  
+  const searchRecursive = (dir: string): string | null => {
+    try {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          if (entry.name === pkg) {
+            const apiPath = path.join(fullPath, 'api.md');
+            if (fs.existsSync(apiPath)) return apiPath;
+            const apiPathX = path.join(fullPath, 'api.mdx');
+            if (fs.existsSync(apiPathX)) return apiPathX;
+          }
+          const found = searchRecursive(fullPath);
+          if (found) return found;
+        }
+      }
+    } catch (e) { }
+    return null;
+  };
+  
+  // Also check the specific known path for foundational packages
+  const foundationalPath = path.join(process.cwd(), 'src/content/docs/packages/foundation', pkg, 'api.md');
+  if (fs.existsSync(foundationalPath)) return foundationalPath;
+
+  return searchRecursive(contentDocsDir);
+};
+
+const apiFilePath = findApiFile(packageName);
+let symbols: { name: string, type: string }[] = [];
+// Safer regex that ensures we don't match across multiple headings
+const symbolRegex = /^###\s+[`"']?([^`"'\n\r(]+)[`"']?(?:(?!^###)[\s\S])*?<span data-api-type='([^']+)'.*?><\/span>/gm;
+
+if (apiFilePath) {
+  try {
+    const content = fs.readFileSync(apiFilePath, 'utf-8');
+    const matches = content.matchAll(symbolRegex);
+    for (const match of matches) {
+      if (match[1]) {
+        const name = match[1].trim();
+        const type = match[2] || 'Other';
+        if (!symbols.some(s => s.name === name)) {
+          symbols.push({ name, type });
+        }
+      }
+    }
+    symbols.sort((a, b) => a.name.localeCompare(b.name));
+  } catch (e) {
+    console.error(`[ApiExplorer] Error reading API file: ${e}`);
+  }
+}
+
+const hasSymbols = symbols.length > 0;
+
+let apiLink = '#';
+if (packageName) {
+  const pkgPattern = `/${packageName}/`;
+  const pkgIndex = pathname.indexOf(pkgPattern);
+  if (pkgIndex !== -1) {
+    apiLink = pathname.substring(0, pkgIndex + pkgPattern.length) + 'api/';
+  } else if (pathname.endsWith(packageName + '/')) {
+    apiLink = pathname + 'api/';
+  } else if (pathname.includes('/' + packageName)) {
+    const altIndex = pathname.indexOf('/' + packageName);
+    apiLink = pathname.substring(0, altIndex + packageName.length + 1) + '/api/';
+  }
+}
+
+const displaySymbols = symbols.slice(0, 100);
+const hasMore = symbols.length > 100;
+
+const getBadgeChar = (type: string) => {
+  switch (type) {
+    case 'Protocols': return 'P';
+    case 'Classes': return 'C';
+    case 'Exceptions': return 'E';
+    case 'Functions': return 'F';
+    default: return 'O';
+  }
+};
+---
+
+{hasSymbols && (
+  <div class="api-explorer" id="api-explorer">
+    <div class="explorer-header">
+      <span class="label">API EXPLORER</span>
+    </div>
+    <div class="explorer-filter-container">
+      <div class="search-wrapper">
+        <input type="search" id="api-search-input" placeholder="Filter symbols..." autocomplete="off" />
+        <button id="api-search-clear" class="clear-btn" aria-label="Clear filter" style="display: none;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+    <ul class="symbol-list" id="api-symbol-list">
+      <li id="api-empty-state" class="empty-state" style="display: none;">No symbols match your filter</li>
+      {displaySymbols.map(symbol => (
+        <li data-symbol={symbol.name.toLowerCase()}>
+          <a href={`${apiLink}#${symbol.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`} title={`${symbol.name} (${symbol.type})`}>
+            <div class="symbol-row">
+              <code>{symbol.name}</code>
+              <span class={`type-badge badge-${symbol.type.toLowerCase().slice(0, -1)}`} title={symbol.type}>
+                {getBadgeChar(symbol.type)}
+              </span>
+            </div>
+          </a>
+        </li>
+      ))}
+      {hasMore && <li class="more" id="api-more-indicator">...and {symbols.length - 100} more</li>}
+    </ul>
+  </div>
+)}
+
+<script>
+    let explorerCleanup: (() => void) | null = null;
+
+    const initExplorer = () => {
+      if (explorerCleanup) explorerCleanup();
+      
+      const searchInput = document.getElementById('api-search-input') as HTMLInputElement;
+      const searchClear = document.getElementById('api-search-clear') as HTMLButtonElement;
+      const symbolList = document.getElementById('api-symbol-list');
+      const moreIndicator = document.getElementById('api-more-indicator');
+      const emptyState = document.getElementById('api-empty-state');
+      
+      if (!searchInput || !symbolList) return;
+      
+      const getItems = () => symbolList.querySelectorAll('li[data-symbol]');
+      const getLinks = () => symbolList.querySelectorAll('a');
+      
+      const handleFilter = (e: Event) => {
+        const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
+        const items = getItems();
+        let matchCount = 0;
+        
+        if (searchClear) searchClear.style.display = query ? 'flex' : 'none';
+        
+        items.forEach(item => {
+          const li = item as HTMLElement;
+          const symbol = li.getAttribute('data-symbol') || '';
+          const link = li.querySelector('code') as HTMLElement;
+          
+          if (symbol.includes(query)) {
+            li.style.display = '';
+            matchCount++;
+            if (query && link) {
+              const originalText = link.textContent || '';
+              const index = originalText.toLowerCase().indexOf(query);
+              if (index !== -1) {
+                const before = originalText.slice(0, index);
+                const match = originalText.slice(index, index + query.length);
+                const after = originalText.slice(index + query.length);
+                link.innerHTML = `${before}<mark style="background: var(--sl-color-accent); color: white; border-radius: 2px; padding: 0 1px;">${match}</mark>${after}`;
+              }
+            } else if (link) {
+              link.textContent = link.textContent; // Reset
+            }
+          } else {
+            li.style.display = 'none';
+          }
+        });
+        if (moreIndicator) moreIndicator.style.display = query ? 'none' : '';
+        if (emptyState) emptyState.style.display = (query && matchCount === 0) ? 'block' : 'none';
+      };
+
+      const handleClear = () => {
+        searchInput.value = '';
+        handleFilter({ target: searchInput } as any);
+        searchInput.focus();
+      };
+
+      const updateActive = (activeId: string | null) => {
+        const links = getLinks();
+        let activeLink: HTMLElement | null = null;
+        const targetHash = activeId ? activeId.toLowerCase() : decodeURIComponent(window.location.hash.toLowerCase().replace('#', ''));
+
+        links.forEach(link => {
+          const href = link.getAttribute('href') || '';
+          const hashMatch = href.match(/#([^#]+)$/);
+          const linkHash = hashMatch ? hashMatch[1].toLowerCase() : '';
+          
+          if (linkHash && linkHash === targetHash) {
+            link.classList.add('active');
+            activeLink = link;
+          } else {
+            link.classList.remove('active');
+          }
+        });
+
+        if (activeLink) {
+          activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      };
+
+      const observerOptions = {
+        rootMargin: '-100px 0% -70% 0%',
+        threshold: [0, 1]
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        if (searchInput.value.trim()) return; // Don't auto-update while filtering
+        const visibleEntries = entries.filter(e => e.isIntersecting);
+        if (visibleEntries.length > 0) {
+          const topmost = visibleEntries.reduce((prev, curr) => {
+            return (Math.abs(curr.boundingClientRect.top - 120) < Math.abs(prev.boundingClientRect.top - 120) ? curr : prev);
+          });
+          updateActive(topmost.target.id);
+        }
+      }, observerOptions);
+
+      const headings = document.querySelectorAll('h2, h3');
+      headings.forEach(h => {
+        if (h.id) observer.observe(h);
+      });
+
+      searchInput.addEventListener('input', handleFilter);
+      if (searchClear) searchClear.addEventListener('click', handleClear);
+      window.addEventListener('hashchange', () => updateActive(null));
+      
+      explorerCleanup = () => {
+        searchInput.removeEventListener('input', handleFilter);
+        if (searchClear) searchClear.removeEventListener('click', handleClear);
+        observer.disconnect();
+        window.removeEventListener('hashchange', () => updateActive(null));
+      };
+
+      updateActive(null);
+      if (window.location.hash) {
+        requestAnimationFrame(() => updateActive(null));
+      }
+    };
+
+    document.addEventListener('astro:page-load', initExplorer);
+    document.addEventListener('astro:after-swap', () => {
+      requestAnimationFrame(initExplorer);
+    });
+    
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      initExplorer();
+    }
+</script>
+
+<style>
+  .api-explorer {
+    font-size: var(--sl-text-sm);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .explorer-header {
+    position: sticky;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem 0.5rem;
+    background-color: var(--sl-color-bg);
+    z-index: 15;
+  }
+
+  .explorer-filter-container {
+    position: sticky;
+    top: 2.25rem; /* Height of header */
+    padding: 0 1rem 0.75rem;
+    background-color: var(--sl-color-bg);
+    z-index: 15;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+  }
+
+  .search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  #api-search-input {
+    width: 100%;
+    background-color: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    color: var(--sl-color-white);
+    padding: 0.25rem 1.75rem 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .clear-btn {
+    position: absolute;
+    right: 0.4rem;
+    background: none;
+    border: none;
+    padding: 2px;
+    color: var(--sl-color-gray-3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    transition: color 0.1s, background-color 0.1s;
+  }
+
+  .clear-btn:hover {
+    color: var(--sl-color-white);
+    background-color: var(--sl-color-gray-5);
+  }
+
+  #api-search-input:focus {
+    border-color: var(--sl-color-accent-high);
+  }
+
+  .label {
+    font-weight: 600;
+    color: var(--sl-color-gray-3);
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .symbol-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .symbol-list li {
+    margin-bottom: 0;
+  }
+
+  .symbol-list a {
+    display: block;
+    padding: 0.3rem 1rem;
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    transition: background-color 0.1s, color 0.1s;
+  }
+
+  .symbol-list a:hover {
+    background-color: var(--sl-color-gray-6);
+    color: var(--sl-color-accent-high);
+  }
+
+  .symbol-list a.active {
+    background-color: var(--sl-color-accent-low);
+    color: var(--sl-color-white);
+    border-left: 3px solid var(--sl-color-accent-high);
+    padding-left: calc(1rem - 3px);
+    font-weight: 600;
+  }
+
+  .symbol-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .symbol-list code {
+    background: none;
+    padding: 0;
+    color: inherit;
+    font-size: 0.85em;
+    font-family: var(--sl-font-mono);
+    font-weight: 400;
+    word-break: break-all;
+  }
+
+  .type-badge {
+    font-family: var(--sl-font-mono);
+    font-size: 0.65rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-weight: 700;
+    flex-shrink: 0;
+    opacity: 0.9;
+  }
+
+  .badge-protocol { 
+    background-color: var(--lex-badge-protocol-bg); 
+    color: var(--lex-badge-protocol-text); 
+    border-color: var(--lex-badge-protocol-border); 
+  }
+  .badge-class { 
+    background-color: var(--lex-badge-class-bg); 
+    color: var(--lex-badge-class-text); 
+    border-color: var(--lex-badge-class-border); 
+  }
+  .badge-exception { 
+    background-color: var(--lex-badge-exception-bg); 
+    color: var(--lex-badge-exception-text); 
+    border-color: var(--lex-badge-exception-border); 
+  }
+  .badge-function { 
+    background-color: var(--lex-badge-function-bg); 
+    color: var(--lex-badge-function-text); 
+    border-color: var(--lex-badge-function-border); 
+  }
+
+  .empty-state {
+    padding: 2rem 1rem;
+    color: var(--sl-color-gray-4);
+    font-size: 0.75rem;
+    text-align: center;
+    font-style: italic;
+  }
+
+  .more {
+    color: var(--sl-color-gray-4);
+    font-style: italic;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    padding: 0 1rem;
+  }
+</style>

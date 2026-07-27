@@ -1,0 +1,655 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@layer starlight.components, starlight.content, tokens, base, components, starlight-overrides, utilities;
+
+/* ============================================================
+   TOKENS — CSS custom properties
+   ============================================================ */
+@layer tokens {
+	:root,
+	::backdrop {
+		/* Typography */
+		--sl-font: 'Inter', system-ui, sans-serif;
+		--sl-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+		--sl-font-heading: 'Inter', system-ui, sans-serif;
+
+		/* Lexigram Brand */
+		--color-brand: #c8ff00;
+		--color-brand-glow: rgba(200, 255, 0, 0.15);
+
+		/* Dark Palette */
+		--color-background: #1a1a1a;
+		--color-background-weak: #222222;
+		--color-background-strong: #2a2a2a;
+		--color-background-strong-hover: #333333;
+		--color-background-interactive: var(--color-brand);
+		--color-background-interactive-weaker: #2a2a2a;
+
+		/* Text */
+		--color-text: #e0e0e0;
+		--color-text-weak: #aaaaaa;
+		--color-text-weaker: #888888;
+		--color-text-strong: #ffffff;
+		--color-text-inverted: #1a1a1a;
+
+		/* Borders */
+		--color-border: #333333;
+		--color-border-weak: #2a2a2a;
+
+		/* Misc */
+		--color-icon: #aaaaaa;
+		--color-link: var(--color-brand);
+
+		/* Sidebar interaction states */
+		--sidebar-link-hover-bg: rgba(255, 255, 255, 0.05);
+		--sidebar-link-active-bg: rgba(200, 255, 0, 0.08);
+		--sidebar-link-active-border: var(--color-brand);
+
+		/* Starlight grayscale — dark */
+		--sl-color-white: #ffffff;
+		--sl-color-gray-1: #e0e0e0;
+		--sl-color-gray-2: #aaaaaa;
+		--sl-color-gray-3: #888888;
+		--sl-color-gray-4: #444444;
+		--sl-color-gray-5: #2a2a2a;
+		--sl-color-gray-6: #222222;
+		--sl-color-black: #1a1a1a;
+
+		/* Sidebar tier surfaces */
+		--main-tier-bg: transparent;
+		--main-tier-text: var(--color-text);
+		--secondary-tier-bg: transparent;
+		--secondary-tier-text: var(--color-text);
+		--sidebar-bg: transparent;
+		--sidebar-text: var(--color-text);
+
+		/* Starlight integration */
+		--sl-color-bg: var(--color-background);
+		--sl-color-bg-nav: var(--color-background-weak);
+		--sl-color-bg-surface: var(--color-background-strong);
+		--sl-color-text: var(--color-text);
+		--sl-color-text-strong: var(--color-text-strong);
+		--sl-color-border: var(--color-border);
+		--sl-color-hairline: var(--color-border-weak);
+		--sl-color-accent: var(--color-brand);
+		--sl-color-text-accent: var(--color-brand);
+		--sl-color-comment: #666666;
+
+		/* Accent hue */
+		--sl-hue-accent: 72;
+
+		/* Reading scale */
+		--sl-text-base-font-size: 1.125rem;
+		--sl-line-height: 1.75;
+		--sl-nav-height: 3.5rem;
+
+		/* API token colors — dark */
+		--lex-color-name: #e0e0e0;
+		--lex-color-colon: #888888;
+		--lex-color-type: #a8d8ff;
+		--lex-color-default: var(--color-brand);
+		--lex-color-string: #98c379;
+		--lex-color-return: #a8d8ff;
+		--lex-color-fname: #c8ff00;
+		--lex-color-keyword: #c8a0f0;
+
+		/* API badge colors */
+		--lex-badge-protocol-bg: rgba(167, 139, 250, 0.1);
+		--lex-badge-protocol-text: #a78bfa;
+		--lex-badge-protocol-border: rgba(167, 139, 250, 0.2);
+		--lex-badge-class-bg: rgba(96, 165, 250, 0.1);
+		--lex-badge-class-text: #60a5fa;
+		--lex-badge-class-border: rgba(96, 165, 250, 0.2);
+		--lex-badge-exception-bg: rgba(248, 113, 113, 0.1);
+		--lex-badge-exception-text: #f87171;
+		--lex-badge-exception-border: rgba(248, 113, 113, 0.2);
+		--lex-badge-function-bg: rgba(52, 211, 153, 0.1);
+		--lex-badge-function-text: #34d399;
+		--lex-badge-function-border: rgba(52, 211, 153, 0.2);
+
+		/* Transition tokens */
+		--transition-fast: 0.15s ease;
+		--transition-base: 0.2s ease;
+		--transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	/* Light Theme */
+	:root[data-theme='light'],
+	[data-theme='light'] ::backdrop {
+		--color-brand: #6b7a00;
+		--color-background: #ffffff;
+		--color-background-weak: #f5f5f5;
+		--color-background-strong: #eeeeee;
+		--color-background-strong-hover: #e0e0e0;
+		--color-background-interactive: var(--color-brand);
+		--color-background-interactive-weaker: #e8e8e8;
+		--color-text: #1a1a1a;
+		--color-text-weak: #444444;
+		--color-text-weaker: #666666;
+		--color-text-strong: #050505;
+		--color-text-inverted: #ffffff;
+		--color-border: #dddddd;
+		--color-border-weak: #eeeeee;
+		--color-icon: #333333;
+		--color-link: var(--color-brand);
+		--sidebar-link-hover-bg: rgba(0, 0, 0, 0.05);
+		--sidebar-link-active-bg: rgba(107, 122, 0, 0.10);
+		--sidebar-link-active-border: var(--color-brand);
+
+		--sl-color-white: #050505;
+		--sl-color-gray-1: #1a1a1a;
+		--sl-color-gray-2: #444444;
+		--sl-color-gray-3: #888888;
+		--sl-color-gray-4: #aaaaaa;
+		--sl-color-gray-5: #eeeeee;
+		--sl-color-gray-6: #f5f5f5;
+		--sl-color-black: #ffffff;
+
+		--sl-color-bg: var(--color-background);
+		--sl-color-bg-nav: var(--color-background-weak);
+		--sl-color-bg-surface: var(--color-background-strong);
+		--sl-color-text: var(--color-text);
+		--sl-color-text-strong: var(--color-text-strong);
+		--sl-color-border: var(--color-border);
+		--sl-color-hairline: var(--color-border-weak);
+		--sl-color-accent: var(--color-brand);
+		--sl-color-text-accent: var(--color-brand);
+
+		--lex-color-name: #1a1a1a;
+		--lex-color-colon: #666666;
+		--lex-color-type: #1a7a5a;
+		--lex-color-default: #5a6800;
+		--lex-color-string: #1a6b2a;
+		--lex-color-return: #1a7a5a;
+		--lex-color-fname: #1a1a1a;
+		--lex-color-keyword: #6b0080;
+	}
+
+	/* Responsive nav height */
+	@media (min-width: 50em) {
+		:root {
+			--sl-nav-height: 4rem;
+		}
+	}
+}
+
+/* ============================================================
+   BASE — Reset, typography defaults
+   ============================================================ */
+@layer base {
+	html,
+	body {
+		color: var(--color-text);
+		font-family: var(--sl-font);
+		font-weight: 400;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	.page {
+		background-color: var(--color-background);
+	}
+
+	::selection {
+		background-color: rgba(200, 255, 0, 0.25);
+		color: #ffffff;
+	}
+
+	a {
+		color: var(--sl-color-text-accent);
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	strong {
+		color: var(--color-text-strong);
+		font-family: var(--sl-font);
+		font-weight: 700;
+		letter-spacing: -0.01em;
+	}
+
+	h1 {
+		font-size: 2.25rem !important;
+		text-transform: none !important;
+		margin-bottom: 1.5rem;
+	}
+
+	h2 {
+		font-size: 1.625rem !important;
+		text-transform: none !important;
+		margin-top: 3rem;
+	}
+
+	h3 {
+		font-size: 1.2rem !important;
+		text-transform: none !important;
+		margin-top: 2rem;
+	}
+
+	hr {
+		border: none;
+		border-top: 1px solid var(--color-border-weak);
+		margin: 2.5rem 0;
+	}
+}
+
+/* ============================================================
+   COMPONENTS — Global component overrides
+   (Targets elements rendered by Starlight built-in components
+   that component-scoped CSS cannot reach)
+   ============================================================ */
+@layer components {
+	/* --- Sidebar structure (Starlight built-in elements) --- */
+	#starlight__sidebar.sidebar-pane,
+	#starlight__sidebar .sidebar-content {
+		background-color: transparent;
+	}
+
+	.sidebar-content {
+		display: flex;
+		flex-direction: row;
+		align-items: stretch;
+		overflow: hidden;
+		flex-shrink: 0;
+		width: var(--sl-sidebar-width);
+	}
+
+	.sidebar-pane {
+		width: var(--sl-sidebar-width);
+	}
+
+	/* --- Sidebar links (rendered by Starlight SidebarSublist) --- */
+	.secondary-tier a,
+	div.right-sidebar a {
+		color: var(--sl-color-gray-2);
+		font-family: var(--sl-font);
+		font-weight: 500;
+		font-size: 0.875rem;
+		line-height: 1.25;
+		transition: all var(--transition-slow);
+		padding: 6px 0.75rem;
+		border-radius: 6px;
+		margin-bottom: 1px;
+	}
+
+	.secondary-tier a:hover,
+	div.right-sidebar a:hover {
+		background: var(--sidebar-link-hover-bg);
+		color: var(--color-text-strong);
+	}
+
+	#packages-top-pane a[aria-current='page'] {
+		background: var(--sidebar-link-active-bg);
+		border-left: 3px solid var(--sidebar-link-active-border);
+		color: var(--color-text-strong);
+		font-weight: 500;
+	}
+
+	#active-docs-pane a[aria-current='page'] {
+		background: var(--sidebar-link-active-bg);
+		border-left: 3px solid var(--sl-color-accent);
+		color: var(--sl-color-accent);
+		font-weight: 500;
+	}
+
+	.secondary-tier a[aria-current='page'],
+	div.right-sidebar a[aria-current='true'] {
+		background: var(--sidebar-link-active-bg);
+		border-left: 3px solid var(--sidebar-link-active-border);
+		font-weight: 500;
+		color: var(--color-text-strong);
+	}
+
+	.secondary-tier .top-level li li a {
+		padding-left: 1.5rem;
+	}
+
+	.secondary-tier .top-level li li li a {
+		padding-left: 2.25rem;
+	}
+
+	.sidebar-group summary,
+	nav.sidebar .top-level>li>details>summary,
+	div.right-sidebar .toc-title {
+		font-family: var(--sl-font);
+		font-weight: 600;
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--color-text-weaker);
+		padding: 0 0.75rem;
+		margin-top: 2rem;
+		margin-bottom: 8px;
+	}
+
+	.sidebar-group summary::marker {
+		color: var(--color-text-weaker);
+	}
+
+	/* --- Sidebar scrollbars (Starlight elements) --- */
+	.right-sidebar,
+	#packages-top-pane,
+	#active-docs-pane,
+	.sidebar-pane,
+	.sidebar-content {
+		scrollbar-width: thin;
+		scrollbar-color: var(--sl-color-gray-5) transparent;
+	}
+
+	.right-sidebar::-webkit-scrollbar,
+	#packages-top-pane::-webkit-scrollbar,
+	#active-docs-pane::-webkit-scrollbar,
+	.sidebar-pane::-webkit-scrollbar,
+	.sidebar-content::-webkit-scrollbar {
+		width: 4px;
+		display: block;
+	}
+
+	.right-sidebar::-webkit-scrollbar-track,
+	#packages-top-pane::-webkit-scrollbar-track,
+	#active-docs-pane::-webkit-scrollbar-track,
+	.sidebar-pane::-webkit-scrollbar-track,
+	.sidebar-content::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	.right-sidebar::-webkit-scrollbar-thumb,
+	#packages-top-pane::-webkit-scrollbar-thumb,
+	#active-docs-pane::-webkit-scrollbar-thumb,
+	.sidebar-pane::-webkit-scrollbar-thumb,
+	.sidebar-content::-webkit-scrollbar-thumb {
+		background-color: var(--sl-color-gray-5);
+		border-radius: 20px;
+	}
+
+	.right-sidebar::-webkit-scrollbar-thumb:hover,
+	#packages-top-pane::-webkit-scrollbar-thumb:hover,
+	#active-docs-pane::-webkit-scrollbar-thumb:hover,
+	.sidebar-pane::-webkit-scrollbar-thumb:hover,
+	.sidebar-content::-webkit-scrollbar-thumb:hover {
+		background-color: var(--sl-color-gray-4);
+	}
+
+	.right-sidebar a {
+		overflow-wrap: break-word;
+		word-break: break-word;
+	}
+
+	/* --- Header structure (Starlight's built-in header) --- */
+	body>.page>header,
+	:root[data-has-sidebar] body>.page>header {
+		background: var(--color-background);
+		padding: 0.75rem 24px;
+		border-bottom: 1px solid var(--color-border-weak);
+		z-index: 20;
+	}
+
+	:root:not([data-has-sidebar]) header.header>div.header {
+		max-width: var(--sl-content-width);
+		margin-inline: auto;
+		width: 100%;
+	}
+
+	:root[data-has-sidebar] header.header>div.header {
+		max-width: 100%;
+		margin-inline: 0;
+	}
+
+	/* --- Main content layout --- */
+	@media (min-width: 50rem) {
+		.main-pane {
+			min-width: 80%;
+			margin-inline-start: 0;
+		}
+	}
+
+}
+
+/* ============================================================
+   STARLIGHT OVERRIDES — Built-in component style overrides
+   ============================================================ */
+@layer starlight-overrides {
+	/* --- Tables --- */
+	.sl-markdown-content table {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 2rem 0;
+	}
+
+	.sl-markdown-content thead th {
+		border-bottom: 2px solid var(--color-border);
+		text-align: left;
+		padding: 0.75rem 1.5rem;
+		font-weight: 600;
+	}
+
+	.sl-markdown-content td {
+		padding: 0.75rem 1.5rem;
+		border-bottom: 1px solid var(--color-border-weak);
+	}
+
+	.sl-markdown-content tr:nth-child(2n) {
+		background-color: transparent;
+	}
+
+	/* --- Code blocks --- */
+	.sl-markdown-content .expressive-code,
+	.sl-markdown-content .expressive-code .frame {
+		min-width: 0;
+	}
+
+	.expressive-code .frame {
+		margin: 0.75rem 0 3rem;
+		border-radius: 8px;
+		border: 1px solid var(--color-border-weak);
+		overflow: hidden;
+		position: relative;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	}
+
+	.expressive-code .frame:not(:has(.header)) {
+		padding-top: 36px;
+	}
+
+	.expressive-code .frame:not(:has(.header))::before {
+		content: '';
+		position: absolute;
+		top: 12px;
+		left: 16px;
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background-color: #ff5f56;
+		box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f;
+		z-index: 10;
+	}
+
+	.expressive-code .header {
+		background: var(--color-background-weak);
+		border-bottom: 1px solid var(--color-border-weak);
+		position: relative;
+		padding-left: 70px;
+		min-height: 36px;
+		display: flex;
+		align-items: center;
+	}
+
+	.expressive-code .header::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 16px;
+		transform: translateY(-50%);
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background-color: #ff5f56;
+		box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f;
+		z-index: 10;
+	}
+
+	.expressive-code .frame.is-terminal .header::after {
+		display: none;
+	}
+
+	.expressive-code pre {
+		background: var(--color-background-weak);
+	}
+
+	.sl-markdown-content :not(pre)>code {
+		background: var(--color-background-weak);
+		color: var(--color-text-strong);
+		border: 1px solid var(--color-border-weak);
+		border-radius: 0.25rem;
+		padding: 0.15em 0.35em;
+		font-size: 0.85em;
+		font-weight: 500;
+	}
+
+	/* --- Asides --- */
+	.sl-markdown-content .starlight-aside {
+		background-color: transparent;
+		border: 1px solid var(--color-border-weak);
+		border-left: 3px solid var(--sl-color-text-accent);
+	}
+
+	.sl-markdown-content .starlight-aside.danger {
+		border-left-color: var(--sl-color-red) !important;
+	}
+
+	.sl-markdown-content .starlight-aside.caution {
+		border-left-color: var(--sl-color-orange) !important;
+	}
+
+	.sl-markdown-content .starlight-aside.tip {
+		border-left-color: var(--sl-color-green) !important;
+	}
+
+	.sl-markdown-content .starlight-aside.note {
+		border-left-color: var(--sl-color-accent) !important;
+	}
+
+	/* --- Cards --- */
+	.sl-markdown-content .card {
+		background-color: var(--color-background-weak);
+		border: 1px solid var(--color-border);
+		transition: transform var(--transition-base), border-color var(--transition-base);
+	}
+
+	.sl-markdown-content .card:hover {
+		transform: translateY(-4px);
+		border-color: var(--color-text-weak);
+	}
+
+	.sl-markdown-content .card .body {
+		color: var(--color-text);
+		font-size: 1rem;
+		line-height: 1.6;
+	}
+
+	.sl-markdown-content .card .title {
+		font-size: 1.125rem;
+		font-weight: 700;
+		color: var(--color-text-strong);
+	}
+
+	.sl-markdown-content .card a {
+		text-decoration: none;
+	}
+
+	/* --- Tabs --- */
+	starlight-tabs {
+		margin-top: 2rem;
+		margin-bottom: 3rem;
+	}
+
+	starlight-tabs [role='tab'] {
+		font-weight: 600;
+		color: var(--color-text-weak);
+	}
+
+	starlight-tabs [role='tab'][aria-selected='true'] {
+		color: var(--color-text-strong);
+	}
+
+	/* --- Landing page hero --- */
+	html[data-has-hero] .hero {
+		padding-top: 5rem;
+		padding-bottom: 3rem;
+		align-items: flex-start;
+		text-align: start;
+	}
+
+	html[data-has-hero] .hero .title {
+		font-size: 3rem;
+		font-family: var(--sl-font);
+		font-weight: 700;
+		color: var(--color-text-strong);
+		letter-spacing: -0.02em;
+		line-height: 1.1;
+	}
+
+	html[data-has-hero] .hero .actions {
+		justify-content: flex-start;
+	}
+
+	html[data-has-hero] .hero .actions a.primary {
+		color: #1a1a1a;
+		background-color: #c8ff00;
+		font-family: var(--sl-font);
+		font-weight: 700;
+		border-radius: 9999px;
+		padding: 0.75rem 1.5rem;
+		transition: filter var(--transition-base), transform var(--transition-base);
+	}
+
+	html[data-has-hero] .hero .actions a.primary:hover {
+		filter: brightness(1.1);
+		transform: scale(1.02);
+	}
+
+	/* --- Hero section (MDX component) --- */
+	.hero-section {
+		text-align: center;
+		margin-top: 5rem;
+		margin-bottom: 2rem;
+	}
+
+	.hero-title {
+		font-size: 3.5rem !important;
+		font-family: var(--sl-font) !important;
+		font-weight: 700 !important;
+		color: var(--color-text-strong) !important;
+		margin-bottom: 1.5rem !important;
+		line-height: 1.1 !important;
+		letter-spacing: -0.02em;
+	}
+
+	.hero-tagline {
+		font-size: 1.25rem !important;
+		color: var(--color-text-weak) !important;
+		max-width: 900px;
+		margin: 0 auto;
+		font-weight: 400;
+		line-height: 1.7 !important;
+	}
+}
+
+/* ============================================================
+   UTILITIES — !important overrides of last resort
+   ============================================================ */
+@layer utilities {
+	@media (max-width: 49.999rem) {
+		:root {
+			--sl-main-tier-width: 0rem;
+		}
+	}
+
+	/* Full-width content — applied last to prevent flicker.
+	   Scoped to non-splash pages so the root index keeps its centered margins. */
+	html:not([data-has-hero]) .content-panel .sl-container {
+		max-width: 100% !important;
+	}
+}

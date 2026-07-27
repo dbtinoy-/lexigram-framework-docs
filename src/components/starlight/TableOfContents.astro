@@ -1,0 +1,83 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import DefaultTableOfContents from '@astrojs/starlight/components/TableOfContents.astro';
+import ApiExplorer from './ApiExplorer.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const { pathname } = Astro.url;
+const isSubDoc = pathname.includes('/docs/');
+
+let hasSymbols = false;
+
+if (!isSubDoc) {
+  const resolvePackage = (urlPath: string) => {
+    if (!urlPath || urlPath === '/') return null;
+    const parts = urlPath.split('/').filter(Boolean);
+    const lexigramPkg = parts.find(p => p.startsWith('lexigram'));
+    if (lexigramPkg) return lexigramPkg;
+    const categories = ['packages', 'platform', 'foundation', 'infra', 'web', 'data', 'security', 'events'];
+    const catIndex = parts.findIndex(p => categories.includes(p));
+    if (catIndex !== -1 && parts[catIndex + 1]) {
+      const pkg = parts[catIndex + 1];
+      if (pkg !== 'api' && pkg !== 'getting-started' && pkg !== 'fundamentals' && pkg !== 'guides') return pkg;
+    }
+    return null;
+  };
+
+  const findApiFile = (pkg: string | null) => {
+    if (!pkg) return null;
+    const contentDocsDir = path.join(process.cwd(), 'src/content/docs');
+    const searchRecursive = (dir: string): string | null => {
+      try {
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const entry of entries) {
+          const fullPath = path.join(dir, entry.name);
+          if (entry.isDirectory()) {
+            if (entry.name === pkg) {
+              const apiPath = path.join(fullPath, 'api.md');
+              if (fs.existsSync(apiPath)) return apiPath;
+              const apiPathX = path.join(fullPath, 'api.mdx');
+              if (fs.existsSync(apiPathX)) return apiPathX;
+            }
+            const found = searchRecursive(fullPath);
+            if (found) return found;
+          }
+        }
+      } catch (e) { }
+      return null;
+    };
+    const foundationalPath = path.join(process.cwd(), 'src/content/docs/packages/foundation', pkg, 'api.md');
+    if (fs.existsSync(foundationalPath)) return foundationalPath;
+    return searchRecursive(contentDocsDir);
+  };
+
+  const packageName = resolvePackage(pathname);
+  const apiFilePath = findApiFile(packageName);
+  if (apiFilePath) {
+    try {
+      const content = fs.readFileSync(apiFilePath, 'utf-8');
+      const matches = [...content.matchAll(/^###\s+[`"']?([^`"'\n\r(]+)[`"']?/gm)];
+      hasSymbols = matches.length > 0;
+    } catch (e) {}
+  }
+}
+---
+
+<div class="toc-wrapper">
+  {hasSymbols ? (
+    <ApiExplorer pathname={pathname} />
+  ) : (
+    <DefaultTableOfContents {...Astro.props} />
+  )}
+</div>
+
+<style>
+  .toc-wrapper {
+    height: calc(100vh - var(--sl-nav-height) - 4rem);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 14rem;
+  }
+</style>

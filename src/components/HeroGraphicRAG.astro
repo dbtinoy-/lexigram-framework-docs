@@ -1,0 +1,133 @@
+---
+// src/components/HeroGraphicRAG.astro
+// RAG Pipeline Flow — based on lexigram-ai-rag (ingest + answer)
+import '../styles/hero-graphic.css';
+---
+
+<div class="hg-wrapper">
+  <div class="glow-blob blob-1"></div>
+  <div class="glow-blob blob-2"></div>
+
+  <div class="hg-card">
+
+    <!-- Window chrome -->
+    <div class="hg-header">
+      <div class="mac-dots">
+        <span class="dot close"></span>
+        <span class="dot min"></span>
+        <span class="dot max"></span>
+      </div>
+      <span class="hg-title">lexigram-ai-rag · pipeline</span>
+      <span class="hg-badge">● Live</span>
+    </div>
+
+    <!-- Body: two columns -->
+    <div class="hg-body">
+
+      <!-- LEFT: condensed code snippet -->
+      <div class="hg-code">
+        <div class="code-file-tab">pipeline.py</div>
+        <pre><code><span class="c"># build a rag pipeline in one module</span>
+<span class="kw">from</span> lexigram.ai.rag <span class="kw">import</span> RAGModule, RAGPipeline
+
+pipeline = <span class="fn">RAGPipeline</span>(
+    embedder=<span class="st">"text-embedding-3-small"</span>,
+    retriever=<span class="st">"qdrant"</span>,
+    top_k=<span class="tp">5</span>,
+)
+
+<span class="kw">await</span> pipeline.ingest(docs)
+result = <span class="kw">await</span> pipeline.answer(<span class="st">"What is the Result pattern?"</span>)
+<span class="kw">return</span> result.unwrap()</code></pre>
+      </div>
+
+      <!-- RIGHT: live pipeline trace -->
+      <div class="hg-trace">
+
+        <!-- User query -->
+        <div class="trace-row">
+          <div class="trace-node user-node">
+            <div class="tn-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <div class="tn-text">
+              <span class="tn-label">User Query</span>
+              <span class="tn-value">"What is the Result pattern?"</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="trace-connector"></div>
+
+        <!-- Embed -->
+        <div class="trace-row">
+          <div class="trace-node agent-node">
+            <div class="tn-icon" style="color:#a855f7;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>
+            </div>
+            <div class="tn-text">
+              <span class="tn-label" style="color:rgba(168,85,247,0.7);">Embed · 1536-dim</span>
+              <span class="tn-value">text-embedding-3-small</span>
+            </div>
+            <div class="thinking-dots"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+
+        <div class="trace-connector"></div>
+
+        <!-- Retrieve -->
+        <div class="trace-row">
+          <div class="trace-node tool-node">
+            <div class="tn-icon" style="color:#f59e0b;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v6c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 11v6c0 1.66 4.03 3 9 3s9-1.34 9-3v-6"/></svg>
+            </div>
+            <div class="tn-text">
+              <span class="tn-label" style="color:rgba(245,158,11,0.7);">Retrieve · top_k=5</span>
+              <span class="tn-value">qdrant · 0.34s</span>
+            </div>
+            <span class="tn-tag">Vector</span>
+          </div>
+        </div>
+
+        <div class="trace-connector"></div>
+
+        <!-- Augment -->
+        <div class="trace-row">
+          <div class="trace-node wire-node">
+            <div class="tn-icon" style="color:#38bdf8;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div class="tn-text">
+              <span class="tn-label" style="color:rgba(56,189,248,0.7);">Augment · context</span>
+              <span class="tn-value">4.2k tokens · 5 chunks</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="trace-connector"></div>
+
+        <!-- Result -->
+        <div class="trace-row">
+          <div class="trace-node result-node">
+            <div class="tn-icon" style="color:#22c55e;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="tn-text">
+              <span class="tn-label" style="color:rgba(34,197,94,0.7);">Result · Ok(str)</span>
+              <span class="tn-value">"The Result pattern makes failure explicit..."</span>
+            </div>
+            <div class="status-glow"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Variant accents only — structural and animation styles live in
+   * src/styles/hero-graphic.css. RAG palette leans teal/green. */
+  .blob-1 { width: 280px; height: 280px; top: -40px; left: -40px; background: rgba(56, 189, 248, 0.30); }
+  .blob-2 { width: 260px; height: 260px; bottom: -40px; right: -20px; background: rgba(34, 197, 94, 0.20); }
+</style>

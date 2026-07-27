@@ -1,0 +1,209 @@
+---
+title: Lexigram
+description: Agents, LLMs, RAG, Skills — wired together, no glue code.
+template: splash
+banner:
+  content: 0.1 — early on purpose · pin your versions and shape it with us
+hero:
+  tagline: the python framework for ai products.
+  actions:
+    - text: Get Started
+      link: /getting-started/installation/
+      icon: right-arrow
+      variant: primary
+    - text: Explore the Ecosystem
+      link: /ecosystem/
+      icon: puzzle
+      variant: secondary
+    - text: GitHub
+      link: https://github.com/dbtinoy-/lexigram
+      icon: github
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard, TabItem, Tabs } from '@astrojs/starlight/components';
+import HeroGraphic from '../../components/HeroGraphic.astro';
+import HeroGraphicRAG from '../../components/HeroGraphicRAG.astro';
+import HeroGraphicBoot from '../../components/HeroGraphicBoot.astro';
+
+<HeroGraphic />
+
+---
+
+hey — wanna ship an AI app this weekend?
+
+Lexigram is a python framework that hands you Agents, LLMs, RAG, Skills, and memory already wired up — no glue code, no "and then we add the queue," no 200-line config files. The full async backend is right there too: web, sql, cache, auth, queues, events — all wired through one container, all built around one rule. It's async-native, container-managed, and built so the same patterns that get you to a demo on Sunday still hold up when the weekend project turns into the company. Pick a few packages, boot the application, ship the thing.
+
+---
+
+```text
+HOOK    agents · llms · rag · mcp · memory
+CORE    web · sql · cache · auth · queue · events
+TRUST   di · contracts · modules · async
+```
+
+---
+
+## what it does, in three cards
+
+<CardGrid>
+  <Card title="Agents" icon="puzzle">
+    Define an agent class, decorate a few `@tool` methods, pick a strategy (`react`, `plan`, your own). The container wires the LLM, the tools, and the trace — you just run it.
+  </Card>
+  <Card title="RAG" icon="magnifier">
+    Stand up a retrieval pipeline with one `RAGPipeline(...)`. Embedders, retrievers, chunkers, and rerankers are all swappable through contracts. Ingest once, answer forever.
+  </Card>
+  <Card title="MCP" icon="seti:plug">
+    Serve tools to any MCP-compatible host, or consume tools from any MCP server. Same contracts, same container. Your agent doesn't care which side of the wire it's on.
+  </Card>
+</CardGrid>
+
+<HeroGraphicRAG />
+
+---
+
+## how it feels to write Lexigram
+
+<Tabs>
+<TabItem label="1. declare contracts" icon="list-format">
+
+Say what you need, not who provides it. Contracts live in `lexigram-contracts` so nothing across the rest of the codebase has to know who's on the other end.
+
+```python
+from typing import Protocol
+
+class NotificationServiceProtocol(Protocol):
+    async def send(self, user_id: str, message: str) -> None:
+        """Send a notification to a user."""
+```
+
+</TabItem>
+<TabItem label="2. write business logic" icon="puzzle">
+
+Constructor injection, no globals. Your IDE gets full type inference, your tests get whatever fake you want to pass in.
+
+```python
+from lexigram import injectable
+
+@injectable
+class CheckoutService:
+    def __init__(self, notifier: NotificationServiceProtocol) -> None:
+        self.notifier = notifier
+
+    async def complete_order(self, user_id: str) -> None:
+        # Process order...
+        await self.notifier.send(user_id, "Order Complete!")
+```
+
+</TabItem>
+<TabItem label="3. bundle in providers" icon="setting">
+
+A provider is the seam where "what I need" meets "what to use." Group your bindings, set a priority, and the container handles the rest.
+
+```python
+from lexigram import Provider, ProviderPriority
+
+class NotificationProvider(Provider):
+    name = "notification"
+    priority = ProviderPriority.COMMS
+
+    async def register(self, container) -> None:
+        # Bind the concrete implementation to the protocol
+        container.singleton(NotificationServiceProtocol, SlackNotifier)
+```
+
+</TabItem>
+<TabItem label="4. run the application" icon="rocket">
+
+Boot a single Application with the providers you want wired together. That's the whole backend, ready when you are.
+
+```python
+from lexigram import Application
+
+async with Application.boot(
+    name="my-app",
+    providers=[NotificationProvider(), WebProvider()]
+) as app:
+    # App is fully booted. Infrastructure is ready.
+    pass
+```
+
+</TabItem>
+</Tabs>
+
+<HeroGraphicBoot />
+
+---
+
+## early on purpose
+
+Lexigram is in 0.1 — which means you can still change it. APIs may shift before 1.0, so pin your versions, and tell us what feels wrong. Shaping a framework is more fun when it's still soft.
+
+→ [github.com/dbtinoy-/lexigram/issues](https://github.com/dbtinoy-/lexigram/issues)
+
+---
+
+## a unified, pluggable ecosystem
+
+Lexigram is a small core and a wide family of packages — all wired through one container, all built around one rule.
+
+```mermaid
+graph TD
+    subgraph "The Foundation"
+        C1[lexigram-contracts]
+    end
+    subgraph "The Engine"
+        C2[lexigram]
+    end
+    subgraph "The Extensions"
+        E1(lexigram-web)
+        E2(lexigram-sql)
+        E3(lexigram-ai)
+        E4(lexigram-events)
+    end
+
+    C1 --> C2
+    C1 -.-> E1 & E2 & E3 & E4
+    C2 -.-> E1 & E2 & E3 & E4
+
+    style C1 fill:#1a1a24,stroke:#4a4a6a,stroke-width:2px,color:#fff
+    style C2 fill:#2d1b36,stroke:#6a4a8a,stroke-width:2px,color:#fff
+    style E1 fill:#1b362d,stroke:#4a8a6a,stroke-width:1px,color:#fff
+    style E2 fill:#1b2d36,stroke:#4a6a8a,stroke-width:1px,color:#fff
+    style E3 fill:#362d1b,stroke:#8a6a4a,stroke-width:1px,color:#fff
+    style E4 fill:#361b1b,stroke:#8a4a4a,stroke-width:1px,color:#fff
+```
+
+> the rule: extensions never depend on each other — they talk through contracts.
+
+---
+
+## where to next
+
+<CardGrid>
+  <LinkCard
+    title="Zero to running"
+    description="Install the framework and build your first application step by step."
+    href="/getting-started/installation/"
+  />
+  <LinkCard
+    title="Core concepts"
+    description="Master Providers, Dependency Injection, Modules, and the Result pattern."
+    href="/getting-started/core-concepts/"
+  />
+  <LinkCard
+    title="Architecture"
+    description="Understand the boundary laws that keep Lexigram applications composable."
+    href="/fundamentals/architecture/"
+  />
+  <LinkCard
+    title="Explore the ecosystem"
+    description="Browse the 35+ available extensions, from Web routing to AI tools."
+    href="/ecosystem/"
+  />
+  <LinkCard
+    title="Build with AI agents"
+    description="Drop the lexigram-skills bundle into Claude Code, OpenCode, Cursor, or any markdown-aware agent. The agent learns the same patterns you would."
+    href="https://github.com/dbtinoy-/lexigram-skills"
+  />
+</CardGrid>
