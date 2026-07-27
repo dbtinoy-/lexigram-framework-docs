@@ -130,15 +130,16 @@ export default defineConfig({
                             label: 'lexigram-infra',
                             autogenerate: { directory: 'packages/infra' },
                         },
-                {
-                    label: 'lexigram-utilities',
-                    autogenerate: { directory: 'packages/utilities' },
-                },
+                        {
+                            label: 'lexigram-utilities',
+                            autogenerate: { directory: 'packages/utilities' },
+                        },
                     ],
                 },
                 // Experimental
                 {
                     label: 'EXPERIMENTAL',
+                    collapsed: false,
                     items: [
                         {
                             label: 'lexigram-experimental',
