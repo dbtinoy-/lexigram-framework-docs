@@ -24,4 +24,5 @@ pnpm-debug.log*
 screen_design/
 _archive/
 *.log
-/docs/
+Makefile
+scripts/
