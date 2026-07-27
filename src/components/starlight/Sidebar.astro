@@ -30,7 +30,7 @@ const PATH_GROUPS: [string, string][] = [
   ['packages/observability', 'infra'],
   ['packages/foundation', 'foundation'],
   ['packages/core', 'foundation'],
-  ['experimental', 'experimental'],
+  ['experimental', 'utilities'],
 ];
 
 const activeGroup = (
@@ -51,7 +51,6 @@ const GROUP_CONFIG: Record<string, { source: 'top' | 'core'; label: string; subL
   guides: { source: 'top', label: 'GUIDES' },
   reference: { source: 'top', label: 'REFERENCE' },
   audit: { source: 'top', label: 'AUDIT' },
-  experimental: { source: 'top', label: 'EXPERIMENTAL' },
   utilities: { source: 'core', label: 'lexigram-utilities' },
   ai: { source: 'top', label: 'PLATFORM', subLabel: 'lexigram-ai' },
   foundation: { source: 'core', label: 'lexigram-foundation' },
