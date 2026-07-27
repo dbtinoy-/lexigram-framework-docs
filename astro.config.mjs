@@ -133,21 +133,21 @@ export default defineConfig({
             {
               label: 'lexigram-utilities',
               items: [
-                { label: 'Overview', slug: 'experimental' },
+                { label: 'Experimental', slug: 'experimental' },
                 {
-                  label: 'Testing',
+                  label: 'lexigram-testing',
                   autogenerate: { directory: 'packages/utilities/lexigram-testing' },
                 },
                 {
-                  label: 'Admin',
+                  label: 'lexigram-admin',
                   autogenerate: { directory: 'experimental/lexigram-admin' },
                 },
                 {
-                  label: 'CLI',
+                  label: 'lexigram-cli',
                   autogenerate: { directory: 'experimental/lexigram-cli' },
                 },
                 {
-                  label: 'UI',
+                  label: 'lexigram-ui',
                   autogenerate: { directory: 'experimental/lexigram-ui' },
                 },
               ],
