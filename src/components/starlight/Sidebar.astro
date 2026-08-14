@@ -19,6 +19,8 @@ const PATH_GROUPS: [string, string][] = [
   ['audit', 'audit'],
   ['packages/events', 'events'],
   ['packages/utilities', 'utilities'],
+  ['platform/lexigram-multimedia', 'multimedia'],
+  ['platform/lexigram-ai', 'ai'],
   ['platform', 'ai'],
   ['packages/web', 'web'],
   ['packages/web-api', 'web'],
@@ -37,9 +39,11 @@ const activeGroup = (
   PATH_GROUPS
     .sort((a, b) => b[0].length - a[0].length)
     .find(([path]) => {
-      const normalizedPath = pathname.replace(/\/$/, '') + '/';
-      const searchPath = ('/' + path).replace(/\/$/, '') + '/';
-      return normalizedPath.includes(searchPath);
+      const normalizedPath = pathname.replace(/\/$/, '');
+      const searchPath = ('/' + path).replace(/\/$/, '');
+      return normalizedPath === searchPath
+        || normalizedPath.startsWith(searchPath + '/')
+        || normalizedPath.startsWith(searchPath + '-');
     })?.[1]
   ?? 'foundation'
 );
@@ -52,7 +56,8 @@ const GROUP_CONFIG: Record<string, { source: 'top' | 'core'; label: string; subL
   reference: { source: 'top', label: 'REFERENCE' },
   audit: { source: 'top', label: 'AUDIT' },
   utilities: { source: 'core', label: 'lexigram-utilities' },
-  ai: { source: 'top', label: 'PLATFORM', subLabel: ['lexigram-ai', 'lexigram-multimedia'] },
+  ai: { source: 'top', label: 'PLATFORM', subLabel: 'lexigram-ai' },
+  multimedia: { source: 'top', label: 'PLATFORM', subLabel: 'lexigram-multimedia' },
   foundation: { source: 'core', label: 'lexigram-foundation' },
   web: { source: 'core', label: 'lexigram-web' },
   data: { source: 'core', label: 'lexigram-data' },

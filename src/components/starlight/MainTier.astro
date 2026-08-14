@@ -30,7 +30,8 @@ const sections = [
   {
     title: 'Platform',
     items: [
-      { id: 'ai', icon: 'robot-emoji', label: 'AI', shortLabel: 'AI', href: '/platform/' },
+      { id: 'ai', icon: 'robot-emoji', label: 'AI', shortLabel: 'AI', href: '/platform/lexigram-ai/' },
+      { id: 'multimedia', icon: 'multimedia', label: 'Multimedia', shortLabel: 'MM', href: '/platform/lexigram-multimedia/' },
     ],
   },
 
@@ -54,6 +55,10 @@ const sections = [
             {group.id === 'ai' ? (
               <span class="tier-icon-wrapper">
                 🤖
+              </span>
+            ) : group.id === 'multimedia' ? (
+              <span class="tier-icon-wrapper">
+                🎨
               </span>
             ) : group.id === 'utilities' ? (
               <span class="tier-icon-wrapper">
