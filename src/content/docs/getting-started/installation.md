@@ -80,17 +80,18 @@ Multi-provider LLM client and the orchestration layer. Add `lexigram-ai-rag`, `l
 
 ## All Packages
 
-The open-source ecosystem is 35+ extensions across these areas. See **[The Ecosystem](/ecosystem/)** for the full, annotated list.
+The open-source ecosystem is 50+ extensions across these areas. See **[The Ecosystem](/ecosystem/)** for the full, annotated list.
 
 | Category | Packages |
 |----------|----------|
 | **Foundation** | `lexigram`, `lexigram-contracts` |
 | **Web & API** | `lexigram-web`, `lexigram-http`, `lexigram-graphql` |
 | **Data & Persistence** | `lexigram-sql`, `lexigram-nosql`, `lexigram-cache`, `lexigram-storage`, `lexigram-search`, `lexigram-vector`, `lexigram-graph` |
-| **AI** | `lexigram-ai`, `lexigram-ai-llm`, `lexigram-ai-rag`, `lexigram-ai-agents`, `lexigram-ai-memory`, `lexigram-ai-skills`, `lexigram-ai-session`, `lexigram-ai-mcp`, `lexigram-ai-workers`, `lexigram-ai-feedback` |
+| **AI** | `lexigram-ai`, `lexigram-ai-llm`, `lexigram-ai-rag`, `lexigram-ai-agents`, `lexigram-ai-memory`, `lexigram-ai-skills`, `lexigram-ai-session`, `lexigram-ai-mcp`, `lexigram-ai-workers`, `lexigram-ai-feedback`, `lexigram-ai-observability`, `lexigram-ai-guard`, `lexigram-ai-governance`, `lexigram-ai-evaluation`, `lexigram-ai-prompt`, `lexigram-ai-relay` |
+| **Multimedia** | `lexigram-multimedia`, `lexigram-multimedia-tts`, `lexigram-multimedia-music`, `lexigram-multimedia-video`, `lexigram-multimedia-image`, `lexigram-multimedia-beat`, `lexigram-multimedia-interpolate`, `lexigram-multimedia-upscale` |
 | **Messaging & Workflow** | `lexigram-events`, `lexigram-queue`, `lexigram-notification`, `lexigram-webhook`, `lexigram-workflow` |
 | **Background Work** | `lexigram-tasks` |
-| **Observability & Reliability** | `lexigram-monitor`, `lexigram-resilience`, `lexigram-audit`, `lexigram-ai-observability` |
+| **Observability & Reliability** | `lexigram-monitor`, `lexigram-resilience`, `lexigram-audit` |
 | **Security & Multi-Tenancy** | `lexigram-auth`, `lexigram-tenancy`, `lexigram-features` |
 | **Developer Tooling** | `lexigram-cli`, `lexigram-testing` |
 
