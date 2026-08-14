@@ -112,10 +112,10 @@ class UserService:
         self.db = db
 
     async def find(self, user_id: str) -> Result[dict, NotFoundError]:
-        row = await self.db.query("SELECT * FROM users WHERE id = :id", {"id": user_id})
+        row = await self.db.execute_query("SELECT * FROM users WHERE id = ?", [user_id])
         if not row:
             return Err(NotFoundError(f"User {user_id} not found"))
-        return Ok({"id": row.id, "name": row.name})
+        return Ok({"id": row[0]["id"], "name": row[0]["name"]})
 ```
 
 The controller then delegates:
@@ -248,13 +248,16 @@ Lexigram's scoped container is particularly useful for per-request units of work
 @scoped
 class UnitOfWork:
     def __init__(self, db: DatabaseProviderProtocol) -> None:
-        self.tx = await db.begin()
+        self._db = db
+
+    async def begin(self) -> None:
+        await self._db.begin_transaction()
 
     async def commit(self) -> None:
-        await self.tx.commit()
+        await self._db.commit_transaction()
 
     async def rollback(self) -> None:
-        await self.tx.rollback()
+        await self._db.rollback_transaction()
 ```
 
 ---
@@ -424,6 +427,6 @@ class MyService:
 - [Application Lifecycle](/fundamentals/application-lifecycle/) — the composition root and boot sequence
 - [Dependency Injection](/fundamentals/dependency-injection/) — scopes, decorators, and manual resolution
 - [Providers](/fundamentals/providers/) — the 2-phase lifecycle and boot ordering
-- [Web Guide](/guides/web/) — controllers, middleware, and routing in depth
+- [Web Guide](/getting-started/first-app/) — controllers, middleware, and routing in depth
 - [Testing](/guides/testing/) — fakes, test beds, and protocol compliance suites
 - [Ecosystem](/ecosystem/) — every extension package and what it does

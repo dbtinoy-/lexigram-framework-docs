@@ -36,9 +36,9 @@ from lexigram.webhook import WebhookModule
 class AppModule(Module):
     pass
 
-app = Application(modules=[AppModule])
-if __name__ == "__main__":
-    app.run()
+async with Application.boot(modules=[AppModule]) as app:
+    # use app.container to resolve services
+    ...
 ```
 
 ## Configuration
@@ -100,8 +100,7 @@ WebhookModule.configure(config)
 
 | Method | Description |
 |--------|-------------|
-| `WebhookModule.configure(config)` | Configure with explicit WebhookConfig |
-| `WebhookModule.stub()` | Minimal config for testing |
+| `WebhookModule.configure(config)` | Configure with explicit WebhookConfig (defaults apply when omitted) |
 
 ## Key Features
 

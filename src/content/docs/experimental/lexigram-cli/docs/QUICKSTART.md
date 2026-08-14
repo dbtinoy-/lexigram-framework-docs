@@ -3,7 +3,9 @@ title: Quickstart
 description: Quickstart guide and reference for the lexigram-cli package in the Lexigram framework.
 ---
 
-> **Experimental** — Pin versions in production and expect public APIs to evolve before 1.0.
+:::tip[Alpha]
+Lexigram is **alpha (0.1.x)**. Pin versions in production and expect public APIs to evolve before 1.0.
+:::
 
 ## Install
 

@@ -44,7 +44,7 @@ const activeGroup = (
   ?? 'foundation'
 );
 
-const GROUP_CONFIG: Record<string, { source: 'top' | 'core'; label: string; subLabel?: string }> = {
+const GROUP_CONFIG: Record<string, { source: 'top' | 'core'; label: string; subLabel?: string | string[] }> = {
   'getting-started': { source: 'top', label: 'GETTING STARTED' },
   ecosystem: { source: 'top', label: 'ECOSYSTEM' },
   fundamentals: { source: 'top', label: 'FUNDAMENTALS' },
@@ -52,7 +52,7 @@ const GROUP_CONFIG: Record<string, { source: 'top' | 'core'; label: string; subL
   reference: { source: 'top', label: 'REFERENCE' },
   audit: { source: 'top', label: 'AUDIT' },
   utilities: { source: 'core', label: 'lexigram-utilities' },
-  ai: { source: 'top', label: 'PLATFORM', subLabel: 'lexigram-ai' },
+  ai: { source: 'top', label: 'PLATFORM', subLabel: ['lexigram-ai', 'lexigram-multimedia'] },
   foundation: { source: 'core', label: 'lexigram-foundation' },
   web: { source: 'core', label: 'lexigram-web' },
   data: { source: 'core', label: 'lexigram-data' },
@@ -73,18 +73,23 @@ const findCoreSubgroup = (label: string) =>
   corePackagesGroup?.entries?.find((e) => e?.type === 'group' && e?.label === label);
 
 const getEntries = () => {
+  const subLabels = currentConfig.subLabel
+    ? Array.isArray(currentConfig.subLabel)
+      ? currentConfig.subLabel
+      : [currentConfig.subLabel]
+    : null;
   if (currentConfig.source === 'top') {
     const topGroup = findTopGroup(currentConfig.label);
-    const sub = currentConfig.subLabel
-      ? (topGroup?.entries?.find((e) => e?.type === 'group' && e?.label === currentConfig.subLabel) as any)?.entries
-      : topGroup?.entries;
-    return sub ?? [];
+    if (!subLabels) return topGroup?.entries ?? [];
+    return subLabels.flatMap((label) =>
+      (topGroup?.entries?.find((e) => e?.type === 'group' && e?.label === label) as any)?.entries ?? []
+    );
   }
   const coreSubgroup = findCoreSubgroup(currentConfig.label);
-  const sub = currentConfig.subLabel
-    ? (coreSubgroup?.entries?.find((e) => e?.type === 'group' && e?.label === currentConfig.subLabel) as any)?.entries
-    : coreSubgroup?.entries;
-  return sub ?? [];
+  if (!subLabels) return coreSubgroup?.entries ?? [];
+  return subLabels.flatMap((label) =>
+    (coreSubgroup?.entries?.find((e) => e?.type === 'group' && e?.label === label) as any)?.entries ?? []
+  );
 };
 
 const flattenLinks = (entries: any[]): any[] =>

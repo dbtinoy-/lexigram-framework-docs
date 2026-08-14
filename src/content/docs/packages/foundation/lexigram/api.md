@@ -5191,7 +5191,7 @@ Execute an async function and return its result as Ok, or Err if a listed except
 This is the canonical (async-first) variant.  Callers must declare which
 exception types are expected failures; unexpected exceptions propagate normally.
 
-For sync functions use <a href='/packages/foundation/lexigram/api/#trycatchsync' style='color:inherit;text-decoration:underline;text-decoration-color:rgba(128,128,128,0.3);text-underline-offset:2px;'>try_catch_sync</a>.
+For sync functions use try_catch_sync.
 
 
 
@@ -5206,45 +5206,6 @@ result = await try_catch((IOError, TimeoutError), fetch, url)
 
 
     result = await try_catch((IOError, TimeoutError), fetch, url)
-
-<hr style='border:none;border-top:1px solid rgba(200,255,0,0.2);margin:1.75rem 0 0 0;' />
-
-<div data-pagefind-weight='10'>
-
-### `try_catch_sync`
-
-</div>
-
-<span data-api-type='Functions' style='display:none;'></span>
-
-<div style='border-radius:8px;border:1px solid var(--color-border-weak);overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.35);margin-bottom:1.5rem;'><div style='background:var(--color-background-weak);border-bottom:1px solid var(--color-border-weak);padding:0 1rem;min-height:36px;display:flex;align-items:center;padding-left:70px;position:relative;'><span style='position:absolute;top:50%;left:16px;transform:translateY(-50%);display:inline-block;width:12px;height:12px;border-radius:50%;background-color:#ff5f56;box-shadow:20px 0 0 #ffbd2e,40px 0 0 #27c93f;'></span><span style='font-family:var(--sl-font-mono);font-size:0.72em;color:var(--color-text-weaker);'>try_catch_sync</span></div><pre style='margin:0;background:var(--color-background-weak);font-family:var(--sl-font-mono);font-size:0.9em;line-height:1.65;white-space:pre-wrap;word-break:break-all;padding:0.75rem 1rem;'><span style='color: var(--lex-color-keyword)'>def </span><span style='color: var(--lex-color-fname); font-weight: 600'>try_catch_sync</span><span style='color: var(--lex-color-colon)'>(</span>
-    <span style='color: var(--lex-color-name)'>catch</span><span style='color: var(--lex-color-colon)'>: </span><span style='color: var(--lex-color-type)'>tuple<span style='color: var(--lex-color-colon)'>[</span>type<span style='color: var(--lex-color-colon)'>[</span>Exception<span style='color: var(--lex-color-colon)'>]</span><span style='color: var(--lex-color-colon)'>,</span> Ellipsis<span style='color: var(--lex-color-colon)'>]</span></span><span style='color: var(--lex-color-colon)'>,</span>
-    <span style='color: var(--lex-color-name)'>func</span><span style='color: var(--lex-color-colon)'>: </span><span style='color: var(--lex-color-type)'>Callable<span style='color: var(--lex-color-colon)'>[</span>P<span style='color: var(--lex-color-colon)'>,</span> T<span style='color: var(--lex-color-colon)'>]</span></span><span style='color: var(--lex-color-colon)'>,</span>
-    <span style='color: var(--lex-color-default) !important'>*</span><span style='color: var(--lex-color-name)'>args</span><span style='color: var(--lex-color-colon)'>: </span><span style='color: var(--lex-color-type)'>P.args</span><span style='color: var(--lex-color-colon)'>,</span>
-    <span style='color: var(--lex-color-default) !important'>**</span><span style='color: var(--lex-color-name)'>kwargs</span><span style='color: var(--lex-color-colon)'>: </span><span style='color: var(--lex-color-type)'>P.kwargs</span>
-<span style='color: var(--lex-color-colon)'>)</span><span style='color: var(--lex-color-keyword)'> -> </span><span style='color: var(--lex-color-return)'><a href='/packages/foundation/lexigram/api/#result' style='color:inherit;text-decoration:underline;text-decoration-color:rgba(128,128,128,0.3);text-underline-offset:2px;'>Result</a><span style='color: var(--lex-color-colon)'>[</span>T<span style='color: var(--lex-color-colon)'>,</span> Exception<span style='color: var(--lex-color-colon)'>]</span></span></pre></div>
-
-<div style='display:flex;justify-content:flex-end;margin-top:-0.5rem;margin-bottom:0.5rem;'><a href='https://github.com/dbtinoy-/lexigram/blob/main/lexigram/src/lexigram/result/utils.py#L179' target='_blank' rel='noopener noreferrer' style='display:inline-flex;align-items:center;gap:0.3rem;font-size:0.75rem;color:var(--sl-color-gray-3);text-decoration:none;'><svg viewBox='0 0 16 16' width='14' height='14' fill='currentColor'><path d='M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z'/></svg>source</a></div>
-Execute a sync function and return its result as Ok, or Err if a listed exception occurs.
-
-Unlike a bare ``try/except Exception``, callers must explicitly declare which
-exception types are expected failures.  Unexpected exceptions propagate normally.
-
-For async functions use <a href='/packages/foundation/lexigram/api/#trycatch' style='color:inherit;text-decoration:underline;text-decoration-color:rgba(128,128,128,0.3);text-underline-offset:2px;'>try_catch</a> (the canonical async variant).
-
-
-
-<div style='margin:0;line-height:1.4;'><span style='display:block;font-size:0.7em;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--color-brand);margin-top:1rem;margin-bottom:0.4rem;'>Parameters</span><table style='border-collapse:collapse;width:100%;font-size:0.85em;margin:0;margin-bottom:1rem;table-layout:fixed;'><thead><tr><th style='text-align:left;padding:0.4rem 0.5rem;color:var(--color-text-strong);font-weight:600;font-size:0.82em;border-bottom:1px solid var(--color-border-weak);width:20%;'>Parameter</th><th style='text-align:left;padding:0.4rem 0.5rem;color:var(--color-text-strong);font-weight:600;font-size:0.82em;border-bottom:1px solid var(--color-border-weak);width:25%;'>Type</th><th style='text-align:left;padding:0.4rem 0.5rem;color:var(--color-text-strong);font-weight:600;font-size:0.82em;border-bottom:1px solid var(--color-border-weak);padding-left:1.2rem;border-left:1px solid var(--color-border-weak);width:55%;'>Description</th></tr></thead><tbody><tr><td style='padding:0.6rem 0.5rem;vertical-align:top;white-space:nowrap;font-family:var(--sl-font-mono);font-size:0.85em;color:var(--lex-color-name);border-bottom:1px solid var(--color-border-weak);'>`catch`</td><td style='padding:0.6rem 0.5rem;vertical-align:top;color:var(--lex-color-type) !important;font-family:var(--sl-font-mono);font-size:0.82em;border-bottom:1px solid var(--color-border-weak);'>tuple<span style='color: var(--lex-color-colon)'>[</span>type<span style='color: var(--lex-color-colon)'>[</span>Exception<span style='color: var(--lex-color-colon)'>]</span><span style='color: var(--lex-color-colon)'>,</span> Ellipsis<span style='color: var(--lex-color-colon)'>]</span></td><td style='padding:0.6rem 0.5rem 0.6rem 1.2rem;vertical-align:top;font-size:0.9em;font-family:var(--sl-font-mono);color:var(--color-text-weak);border-left:1px solid var(--color-border-weak);border-bottom:1px solid var(--color-border-weak);'>A tuple of exception types to catch and wrap in ``Err``.</td></tr><tr><td style='padding:0.6rem 0.5rem;vertical-align:top;white-space:nowrap;font-family:var(--sl-font-mono);font-size:0.85em;color:var(--lex-color-name);border-bottom:1px solid var(--color-border-weak);'>`func`</td><td style='padding:0.6rem 0.5rem;vertical-align:top;color:var(--lex-color-type) !important;font-family:var(--sl-font-mono);font-size:0.82em;border-bottom:1px solid var(--color-border-weak);'>Callable<span style='color: var(--lex-color-colon)'>[</span>P<span style='color: var(--lex-color-colon)'>,</span> T<span style='color: var(--lex-color-colon)'>]</span></td><td style='padding:0.6rem 0.5rem 0.6rem 1.2rem;vertical-align:top;font-size:0.9em;font-family:var(--sl-font-mono);color:var(--color-text-weak);border-left:1px solid var(--color-border-weak);border-bottom:1px solid var(--color-border-weak);'>The callable to invoke. *args: Positional arguments forwarded to *func*. **kwargs: Keyword arguments forwarded to *func*.</td></tr></tbody></table></div>
-
-
-Example
-
-```python
-result = try_catch_sync((ValueError, KeyError), parse_int, "42")
-```
-
-
-    result = try_catch_sync((ValueError, KeyError), parse_int, "42")
 
 <hr style='border:none;border-top:1px solid rgba(200,255,0,0.2);margin:1.75rem 0 0 0;' />
 

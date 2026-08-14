@@ -7,6 +7,12 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
     site: 'https://docs.lexigram.dev',
     output: 'static',
+    image: {
+        service: {
+            entrypoint: 'astro/assets/services/sharp',
+            config: { limitInputPixels: false },
+        },
+    },
     integrations: [
         mermaid(),
         sitemap(),
@@ -160,7 +166,11 @@ export default defineConfig({
                     items: [
                         {
                             label: 'lexigram-ai',
-                            autogenerate: { directory: 'platform' },
+                            autogenerate: { directory: 'platform/ai' },
+                        },
+                        {
+                            label: 'lexigram-multimedia',
+                            autogenerate: { directory: 'platform/multimedia' },
                         },
                     ],
                 },
