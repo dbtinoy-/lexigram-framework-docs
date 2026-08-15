@@ -4259,6 +4259,69 @@ class TestPayments:
 
 <hr style='border:none;border-top:1px solid rgba(200,255,0,0.2);margin:1.75rem 0 0 0;' />
 
+<div data-pagefind-weight='10'>
+
+### `testbed`
+
+</div>
+
+<span data-api-type='Functions' style='display:none;'></span>
+
+<div style='border-radius:8px;border:1px solid var(--color-border-weak);overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.35);margin-bottom:1.5rem;'><div style='background:var(--color-background-weak);border-bottom:1px solid var(--color-border-weak);padding:0 1rem;min-height:36px;display:flex;align-items:center;padding-left:70px;position:relative;'><span style='position:absolute;top:50%;left:16px;transform:translateY(-50%);display:inline-block;width:12px;height:12px;border-radius:50%;background-color:#ff5f56;box-shadow:20px 0 0 #ffbd2e,40px 0 0 #27c93f;'></span><span style='font-family:var(--sl-font-mono);font-size:0.72em;color:var(--color-text-weaker);'>testbed</span></div><pre style='margin:0;background:var(--color-background-weak);font-family:var(--sl-font-mono);font-size:0.9em;line-height:1.65;white-space:pre-wrap;word-break:break-all;padding:0.75rem 1rem;'><span style='color: var(--lex-color-keyword)'>def </span><span style='color: var(--lex-color-fname); font-weight: 600'>testbed</span><span style='color: var(--lex-color-colon)'>(</span>
+    <span style='color: var(--lex-color-name)'>factory</span><span style='color: var(--lex-color-colon)'>: </span><span style='color: var(--lex-color-type)'>str <span style='color: var(--lex-color-colon)'><span style='color: var(--lex-color-colon)'>|</span></span> Any</span><span style='color: var(--lex-color-colon)'>,</span>
+    <span style='color: var(--lex-color-default) !important'>*</span><span style='color: var(--lex-color-name)'></span><span style='color: var(--lex-color-colon)'>,</span>
+    <span style='color: var(--lex-color-name)'>overrides</span><span style='color: var(--lex-color-colon)'>: </span><span style='color: var(--lex-color-type)'>dict<span style='color: var(--lex-color-colon)'>[</span>type<span style='color: var(--lex-color-colon)'>,</span> Any<span style='color: var(--lex-color-colon)'>]</span> <span style='color: var(--lex-color-colon)'><span style='color: var(--lex-color-colon)'>|</span></span> <span style='color: var(--lex-color-default) !important'>None</span></span><span style='color: var(--lex-color-colon)'> = </span><span style='color: var(--lex-color-default) !important'>None</span>
+<span style='color: var(--lex-color-colon)'>)</span><span style='color: var(--lex-color-keyword)'> -> </span><span style='color: var(--lex-color-return)'>Any</span></pre></div>
+
+<div style='display:flex;justify-content:flex-end;margin-top:-0.5rem;margin-bottom:0.5rem;'><a href='https://github.com/dbtinoy-/lexigram/blob/main/lexigram-testing/src/lexigram/testing/harness/decorators.py#L101' target='_blank' rel='noopener noreferrer' style='display:inline-flex;align-items:center;gap:0.3rem;font-size:0.75rem;color:var(--sl-color-gray-3);text-decoration:none;'><svg viewBox='0 0 16 16' width='14' height='14' fill='currentColor'><path d='M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z'/></svg>source</a></div>
+Mark a test class so every async test method receives a booted ``AppTestBed``.
+
+The decorator wraps each async test method to:
+
+1. Build the merged overrides dict (class-level + per-method).
+2. Boot the application via ``AppTestBed.from_factory``.
+3. Inject ``bed`` as the *second* positional argument (after ``self``).
+4. Tear the application down after the method returns (or raises).
+
+
+
+<div style='margin:0;line-height:1.4;'><span style='display:block;font-size:0.7em;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--color-brand);margin-top:1rem;margin-bottom:0.4rem;'>Parameters</span><table style='border-collapse:collapse;width:100%;font-size:0.85em;margin:0;margin-bottom:1rem;table-layout:fixed;'><thead><tr><th style='text-align:left;padding:0.4rem 0.5rem;color:var(--color-text-strong);font-weight:600;font-size:0.82em;border-bottom:1px solid var(--color-border-weak);width:20%;'>Parameter</th><th style='text-align:left;padding:0.4rem 0.5rem;color:var(--color-text-strong);font-weight:600;font-size:0.82em;border-bottom:1px solid var(--color-border-weak);width:25%;'>Type</th><th style='text-align:left;padding:0.4rem 0.5rem;color:var(--color-text-strong);font-weight:600;font-size:0.82em;border-bottom:1px solid var(--color-border-weak);padding-left:1.2rem;border-left:1px solid var(--color-border-weak);width:55%;'>Description</th></tr></thead><tbody><tr><td style='padding:0.6rem 0.5rem;vertical-align:top;white-space:nowrap;font-family:var(--sl-font-mono);font-size:0.85em;color:var(--lex-color-name);border-bottom:1px solid var(--color-border-weak);'>`factory`</td><td style='padding:0.6rem 0.5rem;vertical-align:top;color:var(--lex-color-type) !important;font-family:var(--sl-font-mono);font-size:0.82em;border-bottom:1px solid var(--color-border-weak);'>str <span style='color: var(--lex-color-colon)'><span style='color: var(--lex-color-colon)'>|</span></span> Any</td><td style='padding:0.6rem 0.5rem 0.6rem 1.2rem;vertical-align:top;font-size:0.9em;font-family:var(--sl-font-mono);color:var(--color-text-weak);border-left:1px solid var(--color-border-weak);border-bottom:1px solid var(--color-border-weak);'>Application factory — either a dotted import string (``"my_app.app:create_app"``) or a callable returning an Application.</td></tr><tr><td style='padding:0.6rem 0.5rem;vertical-align:top;white-space:nowrap;font-family:var(--sl-font-mono);font-size:0.85em;color:var(--lex-color-name);border-bottom:1px solid var(--color-border-weak);'>`overrides`</td><td style='padding:0.6rem 0.5rem;vertical-align:top;color:var(--lex-color-type) !important;font-family:var(--sl-font-mono);font-size:0.82em;border-bottom:1px solid var(--color-border-weak);'>dict<span style='color: var(--lex-color-colon)'>[</span>type<span style='color: var(--lex-color-colon)'>,</span> Any<span style='color: var(--lex-color-colon)'>]</span> <span style='color: var(--lex-color-colon)'><span style='color: var(--lex-color-colon)'>|</span></span> <span style='color: var(--lex-color-default) !important'>None</span></td><td style='padding:0.6rem 0.5rem 0.6rem 1.2rem;vertical-align:top;font-size:0.9em;font-family:var(--sl-font-mono);color:var(--color-text-weak);border-left:1px solid var(--color-border-weak);border-bottom:1px solid var(--color-border-weak);'>Class-level DI overrides shared across *all* test methods.</td></tr></tbody></table></div>
+
+
+
+
+<div style='margin:0;line-height:1.4;'><span style='display:block;font-size:0.7em;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--color-brand);margin-top:1rem;margin-bottom:0.4rem;'>Returns</span><table style='border-collapse:collapse;width:100%;font-size:0.85em;margin:0;margin-bottom:1rem;table-layout:fixed;'><thead><tr><th style='text-align:left;padding:0.4rem 0.5rem;color:var(--color-text-strong);font-weight:600;font-size:0.82em;border-bottom:1px solid var(--color-border-weak);width:45%;'>Type</th><th style='text-align:left;padding:0.4rem 0.5rem;color:var(--color-text-strong);font-weight:600;font-size:0.82em;border-bottom:1px solid var(--color-border-weak);padding-left:1.2rem;border-left:1px solid var(--color-border-weak);width:55%;'>Description</th></tr></thead><tbody><tr><td style='padding:0.6rem 0.5rem;vertical-align:top;color:var(--lex-color-type) !important;font-family:var(--sl-font-mono);font-size:0.82em;border-bottom:1px solid var(--color-border-weak);'>Any</td><td style='padding:0.6rem 0.5rem 0.6rem 1.2rem;vertical-align:top;font-size:0.9em;font-family:var(--sl-font-mono);color:var(--color-text-weak);border-left:1px solid var(--color-border-weak);border-bottom:1px solid var(--color-border-weak);'>Class decorator.</td></tr></tbody></table></div>
+
+
+Example
+
+```python
+@testbed("my_app.app:create_app")
+class TestUserFlow:
+
+    async def test_create_user(self, bed):
+        resp = await bed.client.post("/users", json={"name": "Alice"})
+        assert resp.status_code == 201
+
+    async def test_list_users(self, bed):
+        resp = await bed.client.get("/users")
+        assert resp.status_code == 200
+```
+
+
+    @testbed("my_app.app:create_app")
+    class TestUserFlow:
+
+        async def test_create_user(self, bed):
+            resp = await bed.client.post("/users", json={"name": "Alice"})
+            assert resp.status_code == 201
+
+        async def test_list_users(self, bed):
+            resp = await bed.client.get("/users")
+            assert resp.status_code == 200
+
+<hr style='border:none;border-top:1px solid rgba(200,255,0,0.2);margin:1.75rem 0 0 0;' />
+
 ## Exceptions
 
 

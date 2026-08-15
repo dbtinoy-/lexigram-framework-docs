@@ -9,8 +9,8 @@ title: Env Vars Audit
 ## Summary
 
 - Packages scanned: 34
-- Documented env var entries: 825
-- Unique env var names: 824
+- Documented env var entries: 843
+- Unique env var names: 842
 - Duplicate env var names: 1
 - Intentional non-config env sources: 3
 
@@ -31,11 +31,21 @@ title: Env Vars Audit
 | `LEX_ADMIN__AUDIT__REDACTION_FIELD_DENYLIST` | tuple[str, ...] | (required) | Field names whose values are always redacted in audit payloads. | `lexigram-admin/src/lexigram/admin/config.py:AdminAuditConfig.audit.redaction_field_denylist` |
 | `LEX_ADMIN__AUDIT__REDACTION_PATTERNS` | tuple[str, ...] | (required) | Pattern-based redaction strategies to apply. | `lexigram-admin/src/lexigram/admin/config.py:AdminAuditConfig.audit.redaction_patterns` |
 | `LEX_ADMIN__AUTH__CSRF_TOKEN_LIFETIME` | int | 3600 | CSRF token expiry in seconds | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.csrf_token_lifetime` |
+| `LEX_ADMIN__AUTH__EMAIL_OTP__ENABLED` | bool | True | Enable email OTP factor | `lexigram-admin/src/lexigram/admin/config.py:AdminEmailOtpConfig.auth.email_otp.enabled` |
+| `LEX_ADMIN__AUTH__EMAIL_OTP__RESEND_COOLDOWN_SECONDS` | int | 60 | Minimum seconds between email OTP sends | `lexigram-admin/src/lexigram/admin/config.py:AdminEmailOtpConfig.auth.email_otp.resend_cooldown_secon` |
+| `LEX_ADMIN__AUTH__EMAIL_OTP__TTL_MINUTES` | int | 10 | Code validity window in minutes | `lexigram-admin/src/lexigram/admin/config.py:AdminEmailOtpConfig.auth.email_otp.ttl_minutes` |
+| `LEX_ADMIN__AUTH__EMAIL_VERIFICATION__ENABLED` | bool | True | Enable email verification flow | `lexigram-admin/src/lexigram/admin/config.py:AdminEmailVerificationConfig.auth.email_verification.ena` |
+| `LEX_ADMIN__AUTH__EMAIL_VERIFICATION__ENFORCEMENT` | bool | True | Block login until the email is verified | `lexigram-admin/src/lexigram/admin/config.py:AdminEmailVerificationConfig.auth.email_verification.enf` |
+| `LEX_ADMIN__AUTH__EMAIL_VERIFICATION__TOKEN_TTL_HOURS` | int | 24 | Verify link validity in hours | `lexigram-admin/src/lexigram/admin/config.py:AdminEmailVerificationConfig.auth.email_verification.tok` |
 | `LEX_ADMIN__AUTH__ENABLED` | bool | True | Enable authentication | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.enabled` |
 | `LEX_ADMIN__AUTH__ENV` | Literal['development', 'staging', 'production'] | "development" | Deployment environment for cookie security defaults | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.env` |
 | `LEX_ADMIN__AUTH__IDLE_TIMEOUT` | int | 3600 | Session idle timeout in seconds | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.idle_timeout` |
 | `LEX_ADMIN__AUTH__LOGIN_URL` | str | "/admin/login" |  | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.login_url` |
 | `LEX_ADMIN__AUTH__LOGOUT_URL` | str | "/admin/logout" |  | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.logout_url` |
+| `LEX_ADMIN__AUTH__MFA__ENABLED` | bool | True | Enable TOTP 2FA | `lexigram-admin/src/lexigram/admin/config.py:AdminMfaConfig.auth.mfa.enabled` |
+| `LEX_ADMIN__AUTH__MFA__FACTOR` | str | "totp" | Second factor used at login: 'totp' (authenticator app) or 'email' (one-time code) | `lexigram-admin/src/lexigram/admin/config.py:AdminMfaConfig.auth.mfa.factor` |
+| `LEX_ADMIN__AUTH__MFA__ISSUER` | str | "Lexigram Admin" | TOTP issuer label shown in authenticator apps | `lexigram-admin/src/lexigram/admin/config.py:AdminMfaConfig.auth.mfa.issuer` |
+| `LEX_ADMIN__AUTH__MFA__SKEW` | int | 1 | Allowed clock skew in 30 second steps | `lexigram-admin/src/lexigram/admin/config.py:AdminMfaConfig.auth.mfa.skew` |
 | `LEX_ADMIN__AUTH__OAUTH_ENABLED` | bool | False |  | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.oauth_enabled` |
 | `LEX_ADMIN__AUTH__OAUTH_PROVIDERS` | list[str] | (required) |  | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.oauth_providers` |
 | `LEX_ADMIN__AUTH__PASSWORD_POLICY__MAX_LENGTH` | int | 128 |  | `lexigram-admin/src/lexigram/admin/config.py:AdminPasswordPolicyConfig.auth.password_policy.max_lengt` |
@@ -47,6 +57,9 @@ title: Env Vars Audit
 | `LEX_ADMIN__AUTH__PASSWORD_POLICY__REQUIRE_SPECIAL` | bool | True |  | `lexigram-admin/src/lexigram/admin/config.py:AdminPasswordPolicyConfig.auth.password_policy.require_s` |
 | `LEX_ADMIN__AUTH__PASSWORD_POLICY__REQUIRE_UPPERCASE` | bool | True |  | `lexigram-admin/src/lexigram/admin/config.py:AdminPasswordPolicyConfig.auth.password_policy.require_u` |
 | `LEX_ADMIN__AUTH__PERMISSION_CACHE_TTL` | int | 300 |  | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.permission_cache_ttl` |
+| `LEX_ADMIN__AUTH__REGISTRATION__ALLOWED_EMAIL_DOMAINS` | list[str] | (required) | Restrict registration to these email domains (empty = any) | `lexigram-admin/src/lexigram/admin/config.py:AdminRegistrationConfig.auth.registration.allowed_email_` |
+| `LEX_ADMIN__AUTH__REGISTRATION__DEFAULT_ROLE` | str | "admin" | Role granted to new accounts | `lexigram-admin/src/lexigram/admin/config.py:AdminRegistrationConfig.auth.registration.default_role` |
+| `LEX_ADMIN__AUTH__REGISTRATION__ENABLED` | bool | False | Allow self-service registration | `lexigram-admin/src/lexigram/admin/config.py:AdminRegistrationConfig.auth.registration.enabled` |
 | `LEX_ADMIN__AUTH__ROLES` | dict[str, Any] | (required) |  | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.roles` |
 | `LEX_ADMIN__AUTH__SECURITY__IP_RATE_LIMIT_ENABLED` | bool | True |  | `lexigram-admin/src/lexigram/admin/config.py:AdminSecurityConfig.auth.security.ip_rate_limit_enabled` |
 | `LEX_ADMIN__AUTH__SECURITY__IP_RATE_LIMIT_PER_15_MINUTES` | int | 30 |  | `lexigram-admin/src/lexigram/admin/config.py:AdminSecurityConfig.auth.security.ip_rate_limit_per_15_m` |
@@ -58,6 +71,7 @@ title: Env Vars Audit
 | `LEX_ADMIN__AUTH__SESSION_LIFETIME` | int | 86400 |  | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.session_lifetime` |
 | `LEX_ADMIN__AUTH__SESSION_SECRET` | str | "change-me-in-production" | Session secret for signing | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.session_secret` |
 | `LEX_ADMIN__AUTH__USERS` | list[Any] | (required) |  | `lexigram-admin/src/lexigram/admin/config.py:AdminAuthConfig.auth.users` |
+| `LEX_ADMIN__CLUSTERS__EXTRA` | list[ClusterSpec] | (required) | Extra clusters beyond the built-in infrastructure cluster | `lexigram-admin/src/lexigram/admin/config.py:AdminClustersConfig.clusters.extra` |
 | `LEX_ADMIN__COMMANDS` | list[dict[str, Any]] | (required) |  | `lexigram-admin/src/lexigram/admin/config.py:AdminConfig.commands` |
 | `LEX_ADMIN__CONTRIBUTORS` | dict[str, ContributorConfig] | (required) |  | `lexigram-admin/src/lexigram/admin/config.py:AdminConfig.contributors` |
 | `LEX_ADMIN__CONTRIBUTOR_COLLISION_MODE` | Literal['warn', 'error'] | "warn" | How to handle name collisions when multiple contributors register widgets, pages, or routes with the same name. 'warn' ( | `lexigram-admin/src/lexigram/admin/config.py:AdminConfig.contributor_collision_mode` |
@@ -116,6 +130,7 @@ title: Env Vars Audit
 | `LEX_ADMIN__RATE_LIMIT__REQUESTS_PER_HOUR` | int | 1000 |  | `lexigram-admin/src/lexigram/admin/config.py:AdminRateLimitConfig.rate_limit.requests_per_hour` |
 | `LEX_ADMIN__RATE_LIMIT__REQUESTS_PER_MINUTE` | int | 60 |  | `lexigram-admin/src/lexigram/admin/config.py:AdminRateLimitConfig.rate_limit.requests_per_minute` |
 | `LEX_ADMIN__RATE_LIMIT__UPDATE_PER_MINUTE` | int | 60 |  | `lexigram-admin/src/lexigram/admin/config.py:AdminRateLimitConfig.rate_limit.update_per_minute` |
+| `LEX_ADMIN__RBAC__SUPER_ADMIN_ROLE` | str | "superadmin" |  | `lexigram-admin/src/lexigram/admin/config.py:AdminRbacConfig.rbac.super_admin_role` |
 | `LEX_ADMIN__REQUIRE_AUTH` | bool | True |  | `lexigram-admin/src/lexigram/admin/config.py:AdminConfig.require_auth` |
 | `LEX_ADMIN__RESOURCES` | dict[str, ResourceYAMLConfig] | (required) |  | `lexigram-admin/src/lexigram/admin/config.py:AdminConfig.resources` |
 | `LEX_ADMIN__RESOURCE_DEFAULTS__ACTION_LAYOUT` | Literal['horizontal', 'vertical', 'dropdown'] | "horizontal" |  | `lexigram-admin/src/lexigram/admin/config.py:ResourceDefaults.resource_defaults.action_layout` |
@@ -441,6 +456,7 @@ title: Env Vars Audit
 | `LEX_AUTH__RBAC__ENABLED` | bool | True | Enable RBAC enforcement | `lexigram-auth/src/lexigram/auth/config.py:RBACConfig.rbac.enabled` |
 | `LEX_AUTH__RBAC__PERMISSION_CACHE_TTL` | int | 300 | Permission cache TTL in seconds | `lexigram-auth/src/lexigram/auth/config.py:RBACConfig.rbac.permission_cache_ttl` |
 | `LEX_AUTH__RBAC__SUPERUSER_BYPASS` | bool | True | Allow superuser role to bypass all checks | `lexigram-auth/src/lexigram/auth/config.py:RBACConfig.rbac.superuser_bypass` |
+| `LEX_AUTH__RELAY_VERIFICATION` | bool | False | Enable binding ``RelayAuthVerifierProtocol`` for the relay gateway's inbound API-key authentication.  When ``False`` (de | `lexigram-auth/src/lexigram/auth/config.py:AuthConfig.relay_verification` |
 | `LEX_AUTH__ROLES` | dict[str, AuthRoleConfig] | (required) | Role definitions | `lexigram-auth/src/lexigram/auth/config.py:AuthConfig.roles` |
 | `LEX_AUTH__SECRET_KEY` | str | (required) | Secret key for signing | `lexigram-auth/src/lexigram/auth/config.py:AuthConfig.secret_key` |
 | `LEX_AUTH__TOKEN__ACCESS_TOKEN_EXPIRE` | Duration | Duration.minutes(...) | Access token expiry duration | `lexigram-auth/src/lexigram/auth/config.py:JWTConfig.token.access_token_expire` |
@@ -748,6 +764,7 @@ title: Env Vars Audit
 | `LEX_NOTIFICATION__INBOX__RETENTION_DAYS` | int | 30 | Days to retain inbox messages before pruning. | `lexigram-notification/src/lexigram/notification/config.py:InboxConfig.retention_days` |
 | `LEX_NOTIFICATION__INBOX__STORE_BACKEND` | str | "database" | Storage backend. One of 'database' or 'memory'. | `lexigram-notification/src/lexigram/notification/config.py:InboxConfig.store_backend` |
 | `LEX_NOTIFICATION__MAILER__BACKENDS` | list[NamedMailerConfig] | (required) | Named mailer backends for multi-backend support. When non-empty, the provider registers each backend under Annotated[Mai | `lexigram-notification/src/lexigram/notification/config.py:MailerConfig.backends` |
+| `LEX_NOTIFICATION__MAILER__CONSOLE_FALLBACK` | bool | True | When no backends are configured, bind a ConsoleMailer as the default MailerProtocol so emails are logged to the applicat | `lexigram-notification/src/lexigram/notification/config.py:MailerConfig.console_fallback` |
 | `LEX_NOTIFICATION__PUSH_BACKENDS` | list[NamedPushConfig] | (required) | Named push notification backends for multi-backend support. When non-empty, the provider registers each backend under An | `lexigram-notification/src/lexigram/notification/config.py:NotificationConfig.push_backends` |
 | `LEX_NOTIFICATION__SMS_BACKENDS` | list[NamedSMSConfig] | (required) | Named SMS backends for multi-backend support. When non-empty, the provider registers each backend under Annotated[SMSCha | `lexigram-notification/src/lexigram/notification/config.py:NotificationConfig.sms_backends` |
 
@@ -1002,6 +1019,7 @@ title: Env Vars Audit
 | `LEX_WEB__REDOC_JS_URL` | str  \| None | None |  | `lexigram-web/src/lexigram/web/config.py:WebConfig.redoc_js_url` |
 | `LEX_WEB__REDOC_URL` | str  \| None | "/redoc" |  | `lexigram-web/src/lexigram/web/config.py:WebConfig.redoc_url` |
 | `LEX_WEB__REFERRER_POLICY` | str | "strict-origin-when-cross-origin" | Referrer-Policy header value | `lexigram-web/src/lexigram/web/security/config.py:SecurityConfig.referrer_policy` |
+| `LEX_WEB__ROLE_GUARD__RULES` | list[RoleGuardRuleConfig] | (required) | Role guard rules in declaration order | `lexigram-web/src/lexigram/web/config.py:RoleGuardConfig.role_guard.rules` |
 | `LEX_WEB__SECURITY` | SecurityConfig | (required) | Security configuration (HSTS, CSP, cross-origin, CSRF, headers) | `lexigram-web/src/lexigram/web/config.py:WebConfig.security` |
 | `LEX_WEB__SERVER__DEBUG` | bool | False | Enable debug mode | `lexigram-web/src/lexigram/web/config.py:ServerConfig.server.debug` |
 | `LEX_WEB__SERVER__HOST` | str | (complex) | Bind host | `lexigram-web/src/lexigram/web/config.py:ServerConfig.server.host` |

@@ -8,7 +8,7 @@ description: How-To Guides for lexigram-queue
 ```python
 from typing import Annotated
 from lexigram.contracts.queue import BusMessage, QueueProtocol
-from lexigram.di import Named
+from lexigram.di.markers import Named
 
 
 class OrderService:

@@ -8,13 +8,14 @@ title: Protocols Audit
 
 ## Summary
 
-- Files with protocol declarations: 147
-- Total protocol declarations: 420
+- Files with protocol declarations: 154
+- Total protocol declarations: 427
 
 ## Protocol Files
 
 | File | Protocols |
 |------|-----------|
+| `lexigram-contracts/src/lexigram/contracts/admin/action_hooks.py` | ActionHookProtocol |
 | `lexigram-contracts/src/lexigram/contracts/admin/audit_logger.py` | AdminAuditLoggerProtocol |
 | `lexigram-contracts/src/lexigram/contracts/admin/authorizer.py` | AdminAuthorizerProtocol |
 | `lexigram-contracts/src/lexigram/contracts/admin/cache_provider.py` | CacheProviderProtocol |
@@ -38,11 +39,17 @@ title: Protocols Audit
 | `lexigram-contracts/src/lexigram/contracts/ai/protocols.py` | AIProviderProtocol, AISubsystemProtocol |
 | `lexigram-contracts/src/lexigram/contracts/ai/providers.py` | ProviderRegistryProtocol, ModelSelectorProtocol, FallbackChainProtocol |
 | `lexigram-contracts/src/lexigram/contracts/ai/rag.py` | ChunkProtocol, DocumentLoaderProtocol, SynthesizerProtocol, RAGPipelineProtocol, RetrievalStrategyProtocol, RerankingStrategyProtocol, RAGEvaluatorProtocol, PromptCompressorProtocol |
+| `lexigram-contracts/src/lexigram/contracts/ai/relay/auth.py` | RelayAuthVerifierProtocol |
 | `lexigram-contracts/src/lexigram/contracts/ai/relay/context.py` | MediaResolverProtocol |
 | `lexigram-contracts/src/lexigram/contracts/ai/relay/gateway.py` | RelayGatewayProtocol |
+| `lexigram-contracts/src/lexigram/contracts/ai/relay/ledger.py` | RelayLedgerServiceProtocol |
+| `lexigram-contracts/src/lexigram/contracts/ai/relay/logs.py` | RelayRequestLogStoreProtocol |
 | `lexigram-contracts/src/lexigram/contracts/ai/relay/operations.py` | RelayPolicyStoreProtocol, RelayOperationsProtocol, RelayOperationsControlProtocol |
 | `lexigram-contracts/src/lexigram/contracts/ai/relay/protocols.py` | RelayConverterProtocol, RelayStreamSessionProtocol, RelayMapperProtocol, RelayRegistryProtocol |
+| `lexigram-contracts/src/lexigram/contracts/ai/relay/ratelimit.py` | RelayRateLimitCounterProtocol |
+| `lexigram-contracts/src/lexigram/contracts/ai/relay/store.py` | RelayChannelStoreProtocol |
 | `lexigram-contracts/src/lexigram/contracts/ai/relay/transport.py` | RelayUpstreamProtocol |
+| `lexigram-contracts/src/lexigram/contracts/ai/relay/usage.py` | RelayUsageServiceProtocol |
 | `lexigram-contracts/src/lexigram/contracts/ai/retrievers.py` | RetrieverProtocol, NodePostprocessorProtocol |
 | `lexigram-contracts/src/lexigram/contracts/ai/routing.py` | RoutingStrategyProtocol, LLMRouterProtocol, QuotaBackendProtocol, InferenceLoggerProtocol |
 | `lexigram-contracts/src/lexigram/contracts/ai/runnable.py` | RunnableProtocol |
